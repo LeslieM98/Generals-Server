@@ -1,4 +1,4 @@
-package me.leslie.generals.dedicated.server.valueobject;
+package me.leslie.generals.utility;
 
 import org.junit.jupiter.api.Test;
 

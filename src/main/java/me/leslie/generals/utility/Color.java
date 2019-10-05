@@ -1,8 +1,13 @@
-package me.leslie.generals.dedicated.server.valueobject;
+package me.leslie.generals.utility;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-public class Color {
+import java.io.Serializable;
+
+@Getter
+@EqualsAndHashCode
+public class Color implements Serializable {
     private final int red;
     private final int green;
     private final int blue;
@@ -19,21 +24,21 @@ public class Color {
 
     private static int parseRed(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue in hex has to be 6 characters long");
+            throw new IllegalStateException("Colorvalue Red in hex has to be 6 characters long");
         }
         return Integer.parseInt(hex.substring(0, 2), 16);
     }
 
     private static int parseGreen(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue in hex has to be 6 characters long");
+            throw new IllegalStateException("Colorvalue Green in hex has to be 6 characters long");
         }
         return Integer.parseInt(hex.substring(2, 4), 16);
     }
 
     private static int parseBlue(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue in hex has to be 6 characters long");
+            throw new IllegalStateException("Colorvalue Blue in hex has to be 6 characters long");
         }
         return Integer.parseInt(hex.substring(4, 6), 16);
     }
@@ -44,18 +49,6 @@ public class Color {
         } else {
             throw new IllegalStateException("Colourvalue has to be between 255 and 0");
         }
-    }
-
-    public int getRed() {
-        return red;
-    }
-
-    public int getGreen() {
-        return green;
-    }
-
-    public int getBlue() {
-        return blue;
     }
 
     private String valueToHex(int value) {
@@ -71,21 +64,6 @@ public class Color {
                 .append(valueToHex(green))
                 .append(valueToHex(blue))
                 .toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Color color = (Color) o;
-        return red == color.red &&
-                green == color.green &&
-                blue == color.blue;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(red, green, blue);
     }
 
     @Override
