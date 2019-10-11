@@ -83,7 +83,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>me.leslie.generals.App</mainClass>
+                            <mainClass>me.leslie.generals.server.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -93,7 +93,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.2</version>
                 <configuration>
-                    <mainClass>me.leslie.generals.App</mainClass>
+                    <mainClass>me.leslie.generals.server.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>
