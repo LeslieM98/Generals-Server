@@ -2,7 +2,7 @@ package me.leslie.generals.game.event;
 
 
 import lombok.*;
-import me.leslie.generals.game.entity.Troup;
+import me.leslie.generals.game.entity.Troop;
 import me.leslie.generals.utility.Vector2D;
 
 @Getter
@@ -11,7 +11,7 @@ import me.leslie.generals.utility.Vector2D;
 @EqualsAndHashCode
 public class Movement {
     @NonNull
-    private final Troup troup;
+    private final Troop troup;
     @NonNull
     private final Vector2D newPosition;
 }

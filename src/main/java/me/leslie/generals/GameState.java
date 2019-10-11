@@ -5,11 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import me.leslie.generals.game.entity.Army;
-import me.leslie.generals.game.entity.HQ;
-import me.leslie.generals.game.entity.Troup;
+import me.leslie.generals.game.entity.Troop;
 import me.leslie.generals.game.repository.ArmyRepository;
-import me.leslie.generals.game.repository.HQRepository;
-import me.leslie.generals.game.repository.TroupRepository;
+import me.leslie.generals.game.repository.TroopRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,22 +17,16 @@ import java.util.List;
 @EqualsAndHashCode
 public class GameState {
     @NonNull
-    private final TroupRepository troups;
+    private final TroopRepository troups;
     @NonNull
     private final ArmyRepository armies;
-    @NonNull
-    private final HQRepository hqs;
 
-    public List<Troup> getTroups() {
-        return Collections.unmodifiableList(troups.getTroups());
+    public List<Troop> getTroups() {
+        return Collections.unmodifiableList(List.of());
     }
 
     public List<Army> getArmies() {
-        return Collections.unmodifiableList(armies.getArmies());
-    }
-
-    public List<HQ> getHQs() {
-        return Collections.unmodifiableList(hqs.getHQs());
+        return Collections.unmodifiableList(armies.get());
     }
 
 }

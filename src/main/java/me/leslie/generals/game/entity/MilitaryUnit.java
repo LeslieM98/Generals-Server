@@ -12,7 +12,7 @@ public interface MilitaryUnit {
 
     Optional<List<MilitaryUnit>> getChildren();
 
-    int getID();
+    long getID();
 
     Vector2D getPos();
 }

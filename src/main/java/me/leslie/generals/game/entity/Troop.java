@@ -1,7 +1,7 @@
 package me.leslie.generals.game.entity;
 
 import lombok.*;
-import me.leslie.generals.utility.AttackDistance;
+import me.leslie.generals.utility.CombatRange;
 import me.leslie.generals.utility.MovementSpeed;
 import me.leslie.generals.utility.Vector2D;
 import me.leslie.generals.utility.ViewDistance;
@@ -15,9 +15,9 @@ import java.util.Optional;
 @Builder
 @ToString
 @AllArgsConstructor
-public class Troup implements MilitaryUnit, Serializable {
+public class Troop implements MilitaryUnit, Serializable {
 
-    private final int id;
+    private final long id;
     private final int currentHealth;
     private final int maxHealth;
     @NonNull
@@ -25,9 +25,10 @@ public class Troup implements MilitaryUnit, Serializable {
     @NonNull
     private final MovementSpeed movementSpeed;
     @NonNull
-    private final AttackDistance attackDistance;
+    private final CombatRange combatRange;
     @NonNull
     private final ViewDistance viewDistance;
+
 
     @Override
     public int getCurrentHealth() {
@@ -45,7 +46,7 @@ public class Troup implements MilitaryUnit, Serializable {
     }
 
     @Override
-    public int getID() {
+    public long getID() {
         return id;
     }
 
@@ -58,7 +59,7 @@ public class Troup implements MilitaryUnit, Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Troup troup = (Troup) o;
+        Troop troup = (Troop) o;
         return id == troup.id;
     }
 
@@ -67,13 +68,14 @@ public class Troup implements MilitaryUnit, Serializable {
         return Objects.hash(id);
     }
 
-    public TroupBuilder copy() {
+    public TroopBuilder copy() {
         return builder()
                 .id(id)
                 .currentHealth(currentHealth)
                 .maxHealth(maxHealth)
                 .position(position)
                 .movementSpeed(movementSpeed)
+                .combatRange(combatRange)
                 .viewDistance(viewDistance);
     }
 

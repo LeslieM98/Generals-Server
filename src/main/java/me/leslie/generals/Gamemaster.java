@@ -4,6 +4,4 @@ import com.github.simplenet.Server;
 
 public class Gamemaster {
     Server connection;
-
-
 }

@@ -7,7 +7,6 @@ import lombok.ToString;
 import me.leslie.generals.utility.Color;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -20,8 +19,6 @@ public class Team implements Serializable {
     private final String name;
     @NonNull
     private final Color color;
-    @NonNull
-    private final List<HQ> hqs;
 
     @Override
     public boolean equals(Object o) {

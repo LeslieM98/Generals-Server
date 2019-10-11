@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class AttackDistance implements Serializable {
-    private final double closeCombat;
-    private final double rangedCombat;
+public class CombatRange implements Serializable {
+    private final double close;
+    private final double ranged;
 }
