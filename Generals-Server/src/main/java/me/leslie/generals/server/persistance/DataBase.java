@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
+import me.leslie.generals.server.persistance.exception.InitializationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +22,7 @@ import java.util.Objects;
 @Getter
 public class DataBase {
     public static final String DEFAULT_DB_URL = "jdbc:sqlite:";
-    public static final Map<Path, DataBase> connections = new HashMap<>();
+    private static final Map<Path, DataBase> connections = new HashMap<>();
     @NonNull
     private final String url;
     private final Connection connection;
@@ -34,7 +35,7 @@ public class DataBase {
     }
 
     private DataBase(Path path) throws SQLException {
-        this("jdbc:sqlite:" + path.toString());
+        this(DEFAULT_DB_URL + path.toString());
         this.path = path;
     }
 
@@ -61,7 +62,7 @@ public class DataBase {
         Files.deleteIfExists(path);
     }
 
-    private void initialize() throws SQLException {
+    private void initialize() {
         final String troopSchema = "CREATE TABLE IF NOT EXISTS TROOP(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "current_health INTEGER NOT NULL," +
@@ -88,19 +89,18 @@ public class DataBase {
                 "CHECK (hq != troop)" +
                 ")";
 
-        try {
-            PreparedStatement sql = connection.prepareStatement(troopSchema);
+        try (PreparedStatement sql = connection.prepareStatement(troopSchema)) {
             sql.execute();
-            sql.close();
 
-
-            sql = connection.prepareStatement(armySchema);
-            sql.execute();
-            sql.close();
 
         } catch (SQLException e) {
-            throw new SQLException("Could not initialize Database", e);
+            throw new InitializationException("Could not initialize Troops", e);
         }
 
+        try (PreparedStatement sql = connection.prepareStatement(armySchema)) {
+            sql.execute();
+        } catch (SQLException e) {
+            throw new InitializationException("Could not initialize Armies", e);
+        }
     }
 }

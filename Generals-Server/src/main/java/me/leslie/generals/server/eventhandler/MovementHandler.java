@@ -9,8 +9,6 @@ import me.leslie.generals.core.event.Movement;
 import me.leslie.generals.server.persistance.EventLogger;
 import me.leslie.generals.server.repository.TroopRepository;
 
-import java.sql.SQLException;
-
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
@@ -19,7 +17,7 @@ public class MovementHandler {
     private final TroopRepository troupRepository;
     EventLogger logger;
 
-    public void handleMovement(Movement event) throws SQLException {
+    public void handleMovement(Movement event) {
         Troop unit = troupRepository.getTroop(event.getTroup().getID());
         troupRepository.updateTroop(unit.copy().position(event.getNewPosition()).build());
         logger.log(event);

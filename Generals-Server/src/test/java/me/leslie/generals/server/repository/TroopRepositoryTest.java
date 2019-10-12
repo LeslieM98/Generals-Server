@@ -7,7 +7,6 @@ import me.leslie.generals.core.ViewDistance;
 import me.leslie.generals.core.entity.Troop;
 import me.leslie.generals.core.entity.Troop.TroopBuilder;
 import me.leslie.generals.server.persistance.DataBase;
-import me.leslie.generals.server.repository.exception.DeletionFailedException;
 import me.leslie.generals.server.repository.exception.FetchFailedException;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.AfterEach;
@@ -19,8 +18,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TroopRepositoryTest {
-    DataBase database;
-    TroopRepository repository;
+    private DataBase database;
+    private TroopRepository repository;
 
     @BeforeEach
     void setup() {
@@ -88,16 +87,12 @@ public class TroopRepositoryTest {
         List<Troop> allData = repository.getTroops();
 
         assertTrue(Utils.deepEquality(toQuery, recieved));
-        allData.contains(toQuery);
+        assertTrue(allData.contains(toQuery));
     }
 
     @Test
     void getUnknownTroop() {
-        try {
-            repository.getTroop(111);
-        } catch (FetchFailedException e) {
-            assertTrue(e.getMessage().toLowerCase().contains("troop"));
-        }
+        assertThrows(FetchFailedException.class, () -> repository.getTroop(111));
     }
 
     @Test
@@ -130,24 +125,12 @@ public class TroopRepositoryTest {
 
     @Test
     void getNonExistingTroop() {
-        try {
-            repository.getTroop(444);
-        } catch (FetchFailedException e) {
-            if (!e.getMessage().toLowerCase().contains("troop")) {
-                fail(e);
-            }
-        }
+        assertThrows(FetchFailedException.class, () -> repository.getTroop(444));
     }
 
     @Test
     void deleteUnknownTroop() {
-        try {
-            repository.deleteTroop(444);
-        } catch (DeletionFailedException e) {
-            if (!e.getMessage().toLowerCase().contains("troop")) {
-                fail(e);
-            }
-        }
+        assertFalse(repository.deleteTroop(444));
     }
 
     @Test

@@ -9,8 +9,6 @@ import me.leslie.generals.core.event.Attack;
 import me.leslie.generals.server.persistance.EventLogger;
 import me.leslie.generals.server.repository.TroopRepository;
 
-import java.sql.SQLException;
-
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
@@ -19,7 +17,7 @@ public class AttackHandler {
     private final TroopRepository troupRepository;
     private final EventLogger logger;
 
-    void handleAttack(Attack event) throws SQLException {
+    void handleAttack(Attack event) {
         Troop target = troupRepository.getTroop(event.getTarget().getID());
         int newCurrentHealth = target.getCurrentHealth() - event.getDamage();
         target = target.copy().currentHealth(newCurrentHealth).build();

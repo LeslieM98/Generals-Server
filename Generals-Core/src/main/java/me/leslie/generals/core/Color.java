@@ -60,10 +60,9 @@ public class Color implements Serializable {
     }
 
     public String toHex() {
-        return new StringBuilder(valueToHex(red))
-                .append(valueToHex(green))
-                .append(valueToHex(blue))
-                .toString();
+        return valueToHex(red) +
+                valueToHex(green) +
+                valueToHex(blue);
     }
 
     @Override

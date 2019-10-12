@@ -9,10 +9,17 @@ import me.leslie.generals.core.entity.Army.ArmyBuilder;
 import me.leslie.generals.core.entity.Troop;
 import org.jooq.lambda.Seq;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 public class Utils {
-    public static boolean deepEquality(Troop expected, Troop actual) {
+
+    private Utils() {
+    }
+
+    static boolean deepEquality(Troop expected, Troop actual) {
         if (expected == actual) {
             return true;
         }
@@ -30,7 +37,7 @@ public class Utils {
         return equals;
     }
 
-    public static boolean deepEquality(Army expected, Army actual) {
+    static boolean deepEquality(Army expected, Army actual) {
         if (expected == actual) {
             return true;
         }
@@ -88,7 +95,7 @@ public class Utils {
                 .combatRange(new CombatRange(1751534.0, 1364.0))
                 .viewDistance(new ViewDistance(12168235.3, 12557.3, 5186.3))));
 
-        return Collections.unmodifiableList(troops);
+        return List.copyOf(troops);
     }
 
     static List<Army> initializeArmies(ArmyRepository repository) {

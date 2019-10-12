@@ -21,9 +21,9 @@ import static me.leslie.generals.server.repository.Utils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArmyRepositoryTest {
-    DataBase database;
-    TroopRepository troopRepository;
-    ArmyRepository armyRepository;
+    private DataBase database;
+    private TroopRepository troopRepository;
+    private ArmyRepository armyRepository;
 
 
     @BeforeEach
@@ -48,38 +48,27 @@ public class ArmyRepositoryTest {
 
     @Test
     void createArmyWithoutTroops() {
-        try {
-            Troop t = troopRepository.createTroop(Troop.builder()
-                    .currentHealth(100)
-                    .maxHealth(120)
-                    .position(new Vector2D(120.2, 11.2))
-                    .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
-                    .combatRange(new CombatRange(1534.0, 1364.0))
-                    .viewDistance(new ViewDistance(121235.3, 125.3, 51.3)));
-
-            armyRepository.createArmy(Army.builder().hq(t).troops(List.of()));
-            fail("No exception thrown");
-        } catch (CreationFailedException e) {
-
-        }
+        Troop t = troopRepository.createTroop(Troop.builder()
+                .currentHealth(100)
+                .maxHealth(120)
+                .position(new Vector2D(120.2, 11.2))
+                .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
+                .combatRange(new CombatRange(1534.0, 1364.0))
+                .viewDistance(new ViewDistance(121235.3, 125.3, 51.3)));
+        assertThrows(CreationFailedException.class, () -> armyRepository.createArmy(Army.builder().hq(t).troops(List.of())));
     }
 
     @Test
     void hqIsOneOfTheTroops() {
-        try {
-            Troop t = troopRepository.createTroop(Troop.builder()
-                    .currentHealth(100)
-                    .maxHealth(120)
-                    .position(new Vector2D(120.2, 11.2))
-                    .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
-                    .combatRange(new CombatRange(1534.0, 1364.0))
-                    .viewDistance(new ViewDistance(121235.3, 125.3, 51.3)));
+        Troop t = troopRepository.createTroop(Troop.builder()
+                .currentHealth(100)
+                .maxHealth(120)
+                .position(new Vector2D(120.2, 11.2))
+                .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
+                .combatRange(new CombatRange(1534.0, 1364.0))
+                .viewDistance(new ViewDistance(121235.3, 125.3, 51.3)));
 
-            armyRepository.createArmy(Army.builder().hq(t).troops(List.of(t)));
-            fail("No exception thrown");
-        } catch (CreationFailedException e) {
-
-        }
+        assertThrows(CreationFailedException.class, () -> armyRepository.createArmy(Army.builder().hq(t).troops(List.of(t))));
     }
 
     @Test
@@ -106,14 +95,10 @@ public class ArmyRepositoryTest {
 
     @Test
     void troopInTwoArmies() {
-        try {
-            List<Troop> troops = initializeTroops(troopRepository);
-            armyRepository.createArmy(Army.builder().hq(troops.get(0)).troops(troops.subList(1, 2)));
-            armyRepository.createArmy(Army.builder().hq(troops.get(troops.size() - 1)).troops(troops.subList(1, 2)));
-            fail("No exception Thrown");
-        } catch (CreationFailedException e) {
+        List<Troop> troops = initializeTroops(troopRepository);
+        armyRepository.createArmy(Army.builder().hq(troops.get(0)).troops(troops.subList(1, 2)));
 
-        }
+        assertThrows(CreationFailedException.class, () -> armyRepository.createArmy(Army.builder().hq(troops.get(troops.size() - 1)).troops(troops.subList(1, 2))));
     }
 
     @Test

@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 public class ArmyRepository {
 
+    private static final String TROOP_ROW = "troop";
+    private static final String HQ_ROW = "hq";
+    private static final String TABLE = "ARMY";
 
     @NonNull
     private final DataBase dataBase;
@@ -30,7 +33,7 @@ public class ArmyRepository {
 
     public Army createArmy(ArmyBuilder army) {
         Connection connection = dataBase.getConnection();
-        String query = "INSERT INTO ARMY (hq, troop) VALUES(?, ?)";
+        String query = String.format("INSERT INTO %s (%s, %s) VALUES(?, ?)", TABLE, HQ_ROW, TROOP_ROW);
         try (PreparedStatement sql = connection.prepareStatement(query)) {
             Army instance = army.build();
             for (var troop : instance.getTroops()) {
@@ -60,7 +63,7 @@ public class ArmyRepository {
 
     public void deleteArmy(Army army) {
         Connection connection = dataBase.getConnection();
-        try (PreparedStatement sql = connection.prepareStatement("DELETE FROM ARMY WHERE hq = ?")) {
+        try (PreparedStatement sql = connection.prepareStatement(String.format("DELETE FROM %s WHERE hq = ?", TABLE))) {
             sql.setLong(1, army.getHq().getID());
             sql.execute();
         } catch (SQLException e) {
@@ -70,20 +73,24 @@ public class ArmyRepository {
 
     public Army get(long id) {
         Connection connection = dataBase.getConnection();
-
-        try (PreparedStatement sql = connection.prepareStatement("SELECT * FROM ARMY WHERE hq = ?")) {
+        try (PreparedStatement sql = connection.prepareStatement(String.format("SELECT * FROM %s WHERE %s = ?", TABLE, HQ_ROW))) {
             sql.setLong(1, id);
-            ResultSet results = sql.executeQuery();
-            Troop hq = null;
-            List<Long> troops = new ArrayList<>();
+            try (ResultSet results = sql.executeQuery()) {
+                Troop hq = null;
+                List<Long> troops = new ArrayList<>();
 
-            while (results.next()) {
-                if (hq == null) {
-                    hq = troopRepository.getTroop(results.getLong("hq"));
+                while (results.next()) {
+                    if (hq == null) {
+                        hq = troopRepository.getTroop(results.getLong(HQ_ROW));
+                    }
+                    troops.add(results.getLong(TROOP_ROW));
                 }
-                troops.add(results.getLong("troop"));
+
+                if (hq == null) {
+                    return null;
+                }
+                return Army.builder().hq(hq).troops(troopRepository.getTroops(troops)).build();
             }
-            return Army.builder().hq(hq).troops(troopRepository.getTroops(troops)).build();
         } catch (SQLException e) {
             throw new UpdateFailedException("Could not get Army", e);
         }
@@ -91,20 +98,20 @@ public class ArmyRepository {
 
     public List<Army> get() {
         Connection connection = dataBase.getConnection();
-        try (PreparedStatement sql = connection.prepareStatement("SELECT * FROM ARMY")) {
-            ResultSet results = sql.executeQuery();
-            Map<Long, Set<Long>> armies = new HashMap<>();
+        try (PreparedStatement sql = connection.prepareStatement(String.format("SELECT * FROM %s", TABLE))) {
+            try (ResultSet results = sql.executeQuery()) {
+                Map<Long, Set<Long>> armies = new HashMap<>();
 
-            while (results.next()) {
-                long hq = results.getLong("hq");
-                armies.putIfAbsent(hq, new HashSet<>());
-                armies.get(hq).add(results.getLong("troop"));
+                while (results.next()) {
+                    long hq = results.getLong(HQ_ROW);
+                    armies.putIfAbsent(hq, new HashSet<>());
+                    armies.get(hq).add(results.getLong(TROOP_ROW));
+                }
+
+                return armies.entrySet().stream()
+                        .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
+                        .collect(Collectors.toList());
             }
-
-            return armies.entrySet().stream()
-                    .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
-                    .collect(Collectors.toList());
-
         } catch (SQLException e) {
             throw new UpdateFailedException("Could not get Armies", e);
         }
@@ -114,27 +121,27 @@ public class ArmyRepository {
         Connection connection = dataBase.getConnection();
         StringBuilder idString = new StringBuilder();
         ids.forEach(idString.append((idString.length() == 0) ? "" : ", ")::append);
-        try (PreparedStatement sql = connection.prepareStatement(String.format("Select * FROM ARMY WHERE hq in (%s)", idString.toString()))) {
-            ResultSet results = sql.executeQuery();
-            Map<Long, Set<Long>> armies = new HashMap<>();
+        try (PreparedStatement sql = connection.prepareStatement(String.format("Select * FROM %s WHERE %s in (%s)", TABLE, HQ_ROW, idString.toString()))) {
+            try (ResultSet results = sql.executeQuery()) {
+                Map<Long, Set<Long>> armies = new HashMap<>();
 
-            while (results.next()) {
-                long hq = results.getLong("hq");
-                armies.putIfAbsent(hq, new HashSet<>());
-                armies.get(hq).add(results.getLong("troop"));
+                while (results.next()) {
+                    long hq = results.getLong(HQ_ROW);
+                    armies.putIfAbsent(hq, new HashSet<>());
+                    armies.get(hq).add(results.getLong(TROOP_ROW));
+                }
+
+                return armies.entrySet().stream()
+                        .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
+                        .collect(Collectors.toList());
             }
-
-            return armies.entrySet().stream()
-                    .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
-                    .collect(Collectors.toList());
         } catch (SQLException e) {
             throw new FetchFailedException("Could not get Armies", e);
         }
     }
 
     public Army removeFromArmy(Army army, Collection<Troop> troops) {
-        List<Troop> updatedTroops = new ArrayList<>();
-        updatedTroops.addAll(army.getTroops());
+        List<Troop> updatedTroops = new ArrayList<>(army.getTroops());
         updatedTroops.removeAll(troops);
         return updateArmy(army.copy().troops(updatedTroops).build());
     }
