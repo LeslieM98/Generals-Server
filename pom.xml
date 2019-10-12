@@ -11,6 +11,7 @@
     <modules>
         <module>Generals-Core</module>
         <module>Generals-Server</module>
+        <module>Generals-Client</module>
     </modules>
 
     <properties>
