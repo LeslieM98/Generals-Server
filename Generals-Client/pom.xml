@@ -23,6 +23,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.jhg023</groupId>
+            <artifactId>SimpleNet</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -33,7 +37,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>me.leslie.generals.core.TestMain</mainClass>
+                            <mainClass>me.leslie.generals.client.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

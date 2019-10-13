@@ -29,7 +29,7 @@ public class Army {
         return builder().hq(hq).troops(troops);
     }
 
-    private long getID() {
+    public long getID() {
         return hq.getID();
     }
 
