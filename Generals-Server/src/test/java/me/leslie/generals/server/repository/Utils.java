@@ -26,10 +26,10 @@ public class Utils {
         Objects.requireNonNull(expected, "expected is null");
         Objects.requireNonNull(actual, "actual is null");
 
-        boolean equals = expected.getID() == actual.getID();
+        boolean equals = expected.getId() == actual.getId();
         equals &= expected.getCurrentHealth() == actual.getCurrentHealth();
         equals &= expected.getMaxHealth() == actual.getMaxHealth();
-        equals &= expected.getPos().equals(actual.getPos());
+        equals &= expected.getPosition().equals(actual.getPosition());
         equals &= expected.getMovementSpeed().equals(actual.getMovementSpeed());
         equals &= expected.getCombatRange().equals(actual.getCombatRange());
         equals &= expected.getViewDistance().equals(actual.getViewDistance());
@@ -47,8 +47,8 @@ public class Utils {
         boolean equals = expected.getID() == actual.getID();
         equals &= deepEquality(expected.getHq(), actual.getHq());
         equals &= expected.getTroops().size() == actual.getTroops().size();
-        equals &= Seq.ofType(expected.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getID())), Troop.class)
-                .zip(actual.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getID())))
+        equals &= Seq.ofType(expected.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getId())), Troop.class)
+                .zip(actual.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getId())))
                 .map(x -> deepEquality(x.v1(), x.v2())).reduce(true, (x, y) -> x && y);
         return equals;
     }

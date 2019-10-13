@@ -108,7 +108,7 @@ public class ArmyRepositoryTest {
         Army fetched = armyRepository.removeFromArmy(armies.get(1), List.of(toRemove));
         assertFalse(fetched.getTroops().contains(toRemove));
         assertFalse(armyRepository.get(armies.get(1).getID()).getTroops().contains(toRemove));
-        assertNotNull(troopRepository.getTroop(toRemove.getID()));
+        assertNotNull(troopRepository.getTroop(toRemove.getId()));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class ArmyRepositoryTest {
         assertTrue(deepEquality(toUpdate, created));
         assertTrue(deepEquality(toUpdate, fetched));
 
-        assertTrue(deepEquality(troopRepository.getTroop(removed.getID()), removed));
+        assertTrue(deepEquality(troopRepository.getTroop(removed.getId()), removed));
 
         toUpdate = toUpdate.copy().troops(List.of(removed, notRemoved)).build();
         created = armyRepository.updateArmy(toUpdate);
@@ -167,6 +167,6 @@ public class ArmyRepositoryTest {
         assertTrue(deepEquality(toUpdate, created));
         assertTrue(deepEquality(toUpdate, fetched));
 
-        assertTrue(deepEquality(troopRepository.getTroop(removed.getID()), removed));
+        assertTrue(deepEquality(troopRepository.getTroop(removed.getId()), removed));
     }
 }

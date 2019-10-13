@@ -87,8 +87,8 @@ public class TroopRepository {
 
             sql.setInt(1, troop.getCurrentHealth());
             sql.setInt(2, troop.getMaxHealth());
-            sql.setDouble(3, troop.getPos().getX());
-            sql.setDouble(4, troop.getPos().getY());
+            sql.setDouble(3, troop.getPosition().getX());
+            sql.setDouble(4, troop.getPosition().getY());
             sql.setDouble(5, troop.getMovementSpeed().getNormal());
             sql.setDouble(6, troop.getMovementSpeed().getStreet());
             sql.setDouble(7, troop.getMovementSpeed().getDifficultTerrain());
@@ -129,8 +129,8 @@ public class TroopRepository {
         try (PreparedStatement sql = connection.prepareStatement(query)) {
             sql.setInt(1, troop.getCurrentHealth());
             sql.setInt(2, troop.getMaxHealth());
-            sql.setDouble(3, troop.getPos().getX());
-            sql.setDouble(4, troop.getPos().getY());
+            sql.setDouble(3, troop.getPosition().getX());
+            sql.setDouble(4, troop.getPosition().getY());
             sql.setDouble(5, troop.getMovementSpeed().getNormal());
             sql.setDouble(6, troop.getMovementSpeed().getStreet());
             sql.setDouble(7, troop.getMovementSpeed().getDifficultTerrain());
@@ -140,7 +140,7 @@ public class TroopRepository {
             sql.setDouble(11, troop.getViewDistance().getDisadvantaged());
             sql.setDouble(12, troop.getViewDistance().getAdvantaged());
 
-            sql.setLong(13, troop.getID());
+            sql.setLong(13, troop.getId());
 
             sql.executeUpdate();
         } catch (SQLException e) {

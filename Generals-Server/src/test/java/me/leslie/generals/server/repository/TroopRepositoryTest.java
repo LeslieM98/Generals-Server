@@ -52,7 +52,7 @@ public class TroopRepositoryTest {
 
         Troop localTroop = tb.id(1).build();
         Troop createdTroop = repository.createTroop(tb);
-        Troop queriedTroop = repository.getTroop(createdTroop.getID());
+        Troop queriedTroop = repository.getTroop(createdTroop.getId());
 
         assertTrue(Utils.deepEquality(localTroop, createdTroop));
         assertTrue(Utils.deepEquality(localTroop, queriedTroop));
@@ -63,8 +63,8 @@ public class TroopRepositoryTest {
         List<Troop> created = Utils.initializeTroops(repository);
         List<Troop> queried = repository.getTroops();
         assertEquals(created.size(), queried.size());
-        Seq.ofType(created.stream().sorted((x, y) -> (int) (x.getID() - y.getID())), Troop.class)
-                .zip(queried.stream().sorted((x, y) -> (int) (x.getID() - y.getID())))
+        Seq.ofType(created.stream().sorted((x, y) -> (int) (x.getId() - y.getId())), Troop.class)
+                .zip(queried.stream().sorted((x, y) -> (int) (x.getId() - y.getId())))
                 .forEach(x -> assertTrue(Utils.deepEquality(x.v1(), x.v2())));
     }
 
@@ -72,7 +72,7 @@ public class TroopRepositoryTest {
     void deleteData() {
         List<Troop> initialData = Utils.initializeTroops(repository);
         Troop deleted = initialData.get(3);
-        repository.deleteTroop(deleted.getID());
+        repository.deleteTroop(deleted.getId());
         List<Troop> allQueried = repository.getTroops();
 
         assertEquals(initialData.size() - 1, allQueried.size());
@@ -83,7 +83,7 @@ public class TroopRepositoryTest {
     void getSingle() {
         List<Troop> initialData = Utils.initializeTroops(repository);
         Troop toQuery = initialData.get(3);
-        Troop recieved = repository.getTroop(toQuery.getID());
+        Troop recieved = repository.getTroop(toQuery.getId());
         List<Troop> allData = repository.getTroops();
 
         assertTrue(Utils.deepEquality(toQuery, recieved));

@@ -30,7 +30,7 @@ public class Army {
     }
 
     public long getID() {
-        return hq.getID();
+        return hq.getId();
     }
 
     @Override

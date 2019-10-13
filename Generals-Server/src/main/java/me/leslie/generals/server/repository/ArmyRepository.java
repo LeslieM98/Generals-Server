@@ -38,8 +38,8 @@ public class ArmyRepository {
             Army instance = army.build();
             for (var troop : instance.getTroops()) {
 
-                sql.setLong(1, instance.getHq().getID());
-                sql.setLong(2, troop.getID());
+                sql.setLong(1, instance.getHq().getId());
+                sql.setLong(2, troop.getId());
                 sql.addBatch();
             }
 
@@ -64,7 +64,7 @@ public class ArmyRepository {
     public void deleteArmy(Army army) {
         Connection connection = dataBase.getConnection();
         try (PreparedStatement sql = connection.prepareStatement(String.format("DELETE FROM %s WHERE hq = ?", TABLE))) {
-            sql.setLong(1, army.getHq().getID());
+            sql.setLong(1, army.getHq().getId());
             sql.execute();
         } catch (SQLException e) {
             throw new DeletionFailedException("Could not delete Troop", e);

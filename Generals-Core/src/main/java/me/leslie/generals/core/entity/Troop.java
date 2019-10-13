@@ -7,15 +7,13 @@ import me.leslie.generals.core.Vector2D;
 import me.leslie.generals.core.ViewDistance;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Getter
 @Builder
 @ToString
 @AllArgsConstructor
-public class Troop implements MilitaryUnit, Serializable {
+public class Troop implements Serializable {
 
     private final long id;
     private final int currentHealth;
@@ -28,32 +26,6 @@ public class Troop implements MilitaryUnit, Serializable {
     private final CombatRange combatRange;
     @NonNull
     private final ViewDistance viewDistance;
-
-
-    @Override
-    public int getCurrentHealth() {
-        return currentHealth;
-    }
-
-    @Override
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    @Override
-    public Optional<List<MilitaryUnit>> getChildren() {
-        return Optional.empty();
-    }
-
-    @Override
-    public long getID() {
-        return id;
-    }
-
-    @Override
-    public Vector2D getPos() {
-        return position;
-    }
 
     @Override
     public boolean equals(Object o) {
