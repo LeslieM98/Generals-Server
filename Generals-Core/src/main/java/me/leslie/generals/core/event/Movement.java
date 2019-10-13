@@ -11,7 +11,7 @@ import me.leslie.generals.core.entity.Troop;
 @EqualsAndHashCode
 public class Movement {
     @NonNull
-    private final Troop troup;
+    private final Troop troop;
     @NonNull
     private final Vector2D newPosition;
 }

@@ -18,7 +18,7 @@ public class MovementHandler {
     EventLogger logger;
 
     public void handleMovement(Movement event) {
-        Troop unit = troupRepository.getTroop(event.getTroup().getID());
+        Troop unit = troupRepository.getTroop(event.getTroop().getID());
         troupRepository.updateTroop(unit.copy().position(event.getNewPosition()).build());
         logger.log(event);
     }

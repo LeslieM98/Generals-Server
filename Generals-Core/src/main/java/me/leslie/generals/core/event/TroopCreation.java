@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import me.leslie.generals.core.entity.MilitaryUnit;
+import me.leslie.generals.core.entity.Troop;
 
 @AllArgsConstructor
 @Getter
 @ToString
 @EqualsAndHashCode
-public class Creation {
-    MilitaryUnit unit;
+public class TroopCreation {
+    Troop troop;
 }

@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import me.leslie.generals.core.event.Attack;
-import me.leslie.generals.core.event.Creation;
 import me.leslie.generals.core.event.Movement;
+import me.leslie.generals.core.event.TroopCreation;
 
 import java.util.Map;
 
@@ -17,11 +17,11 @@ import java.util.Map;
 public class EventLogger {
     private final Map<Long, Movement> movements;
     private final Map<Long, Attack> attacks;
-    private final Map<Long, Creation> creations;
-    private long eventId;
+    private final Map<Long, TroopCreation> creations;
+    private long nextID;
 
     private long nextID() {
-        return eventId++;
+        return nextID++;
     }
 
     public void log(Movement event) {
@@ -32,7 +32,7 @@ public class EventLogger {
         attacks.put(nextID(), event);
     }
 
-    public void log(Creation event) {
+    public void log(TroopCreation event) {
         creations.put(nextID(), event);
     }
 }
