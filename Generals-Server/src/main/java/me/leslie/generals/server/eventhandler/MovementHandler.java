@@ -1,10 +1,6 @@
 package me.leslie.generals.server.eventhandler;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import me.leslie.generals.core.entity.Troop;
+import lombok.*;
 import me.leslie.generals.core.event.Movement;
 import me.leslie.generals.server.persistance.EventLogger;
 import me.leslie.generals.server.repository.TroopRepository;
@@ -14,12 +10,13 @@ import me.leslie.generals.server.repository.TroopRepository;
 @EqualsAndHashCode
 @Getter
 public class MovementHandler {
-    private final TroopRepository troupRepository;
-    EventLogger logger;
+    @NonNull
+    private final EventLogger logger;
+    @NonNull
+    private final TroopRepository troopRepository;
 
     public void handleMovement(Movement event) {
-        Troop unit = troupRepository.getTroop(event.getTroop().getID());
-        troupRepository.updateTroop(unit.copy().position(event.getNewPosition()).build());
+        troopRepository.updateTroop(event.getTroop().copy().position(event.getNewPosition()).build());
         logger.log(event);
     }
 }
