@@ -7,6 +7,7 @@ import lombok.ToString;
 import me.leslie.generals.core.Color;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -14,23 +15,24 @@ import java.util.Objects;
 @ToString
 public class Team implements Serializable {
 
-    private final int id;
     @NonNull
     private final String name;
     @NonNull
     private final Color color;
+    @NonNull
+    private final List<Army> armies;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return id == team.id;
+        return this.name.equals(team.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(name);
     }
 
 }
