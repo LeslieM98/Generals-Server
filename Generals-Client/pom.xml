@@ -10,9 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Generals-Client</artifactId>
-    <properties>
-        <java.version>8</java.version>
-    </properties>
 
     <dependencies>
         <dependency>

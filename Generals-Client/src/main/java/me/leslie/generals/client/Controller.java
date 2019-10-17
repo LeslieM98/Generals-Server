@@ -29,9 +29,9 @@ public class Controller {
 
     @FXML
     void initialize() {
-        assert ip != null : "fx:id=\"ip\" was not injected: check your FXML file 'sample.fxml'.";
-        assert port != null : "fx:id=\"port\" was not injected: check your FXML file 'sample.fxml'.";
-        assert connect != null : "fx:id=\"connect\" was not injected: check your FXML file 'sample.fxml'.";
+        assert ip != null : "fx:id=\"ip\" was not injected: check your FXML file 'Connect.fxml'.";
+        assert port != null : "fx:id=\"port\" was not injected: check your FXML file 'Connect.fxml'.";
+        assert connect != null : "fx:id=\"connect\" was not injected: check your FXML file 'Connect.fxml'.";
 
         Connection.getInstance().getClient().onConnect(() -> Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
