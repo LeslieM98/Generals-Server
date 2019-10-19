@@ -6,7 +6,7 @@ import me.leslie.generals.core.Vector2D;
 import me.leslie.generals.core.ViewDistance;
 import me.leslie.generals.core.entity.Troop;
 import me.leslie.generals.core.entity.Troop.TroopBuilder;
-import me.leslie.generals.server.persistance.DataBase;
+import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.repository.exception.FetchFailedException;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.AfterEach;
@@ -18,13 +18,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TroopRepositoryTest {
-    private DataBase database;
+    private Database database;
     private TroopRepository repository;
 
     @BeforeEach
     void setup() {
         try {
-            database = DataBase.get();
+            database = Database.get();
             repository = new TroopRepository(database);
         } catch (Exception e) {
             fail(e);

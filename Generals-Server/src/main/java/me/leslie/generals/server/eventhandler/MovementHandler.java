@@ -2,7 +2,7 @@ package me.leslie.generals.server.eventhandler;
 
 import lombok.*;
 import me.leslie.generals.core.event.Movement;
-import me.leslie.generals.server.persistance.EventLogger;
+import me.leslie.generals.server.persistence.EventLogger;
 import me.leslie.generals.server.repository.TroopRepository;
 
 @AllArgsConstructor

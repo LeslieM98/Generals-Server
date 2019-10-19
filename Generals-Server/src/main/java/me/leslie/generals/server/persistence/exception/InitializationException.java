@@ -1,4 +1,4 @@
-package me.leslie.generals.server.persistance.exception;
+package me.leslie.generals.server.persistence.exception;
 
 public class InitializationException extends RuntimeException {
     public InitializationException(String message, Throwable cause) {

@@ -4,7 +4,7 @@ import lombok.*;
 import me.leslie.generals.core.entity.Army;
 import me.leslie.generals.core.entity.Army.ArmyBuilder;
 import me.leslie.generals.core.entity.Troop;
-import me.leslie.generals.server.persistance.DataBase;
+import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.repository.exception.*;
 
 import java.sql.Connection;
@@ -25,7 +25,7 @@ public class ArmyRepository {
     private static final String TABLE = "ARMY";
 
     @NonNull
-    private final DataBase dataBase;
+    private final Database dataBase;
 
     @NonNull
     private final TroopRepository troopRepository;

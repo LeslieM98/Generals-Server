@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS TROOP(
     normal_view_distance DOUBLE NOT NULL,
     disadvantaged_view_distance DOUBLE NOT NULL,
     advantaged_view_distance DOUBLE NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS ARMY(
     id INTEGER,
@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS ARMY(
     FOREIGN KEY(troop) REFERENCES TROOP(id),
     UNIQUE(hq, troop),
     PRIMARY KEY (id, hq, troop)
-)
+);

@@ -6,7 +6,7 @@ import me.leslie.generals.core.Vector2D;
 import me.leslie.generals.core.ViewDistance;
 import me.leslie.generals.core.entity.Army;
 import me.leslie.generals.core.entity.Troop;
-import me.leslie.generals.server.persistance.DataBase;
+import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.repository.exception.CreationFailedException;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.AfterEach;
@@ -21,7 +21,7 @@ import static me.leslie.generals.server.repository.Utils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArmyRepositoryTest {
-    private DataBase database;
+    private Database database;
     private TroopRepository troopRepository;
     private ArmyRepository armyRepository;
 
@@ -29,7 +29,7 @@ public class ArmyRepositoryTest {
     @BeforeEach
     void setup() {
         try {
-            database = DataBase.get();
+            database = Database.get();
             troopRepository = new TroopRepository(database);
             armyRepository = new ArmyRepository(database, troopRepository);
         } catch (Exception e) {

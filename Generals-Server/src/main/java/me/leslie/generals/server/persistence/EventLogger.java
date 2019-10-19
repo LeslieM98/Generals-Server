@@ -1,4 +1,4 @@
-package me.leslie.generals.server.persistance;
+package me.leslie.generals.server.persistence;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

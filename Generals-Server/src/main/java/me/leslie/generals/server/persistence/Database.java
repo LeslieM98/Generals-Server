@@ -1,10 +1,10 @@
-package me.leslie.generals.server.persistance;
+package me.leslie.generals.server.persistence;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import me.leslie.generals.server.persistance.exception.InitializationException;
+import me.leslie.generals.server.persistence.exception.InitializationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,42 +20,42 @@ import java.util.Objects;
 @EqualsAndHashCode
 @ToString
 @Getter
-public class DataBase {
-    public static final String DEFAULT_DB_URL = "jdbc:sqlite:";
-    private static final Map<Path, DataBase> connections = new HashMap<>();
+public class Database {
+    public static final String DEFAULT_DB_URL = "jdbc:sqlite:tmp.db";
+    private static final Map<Path, Database> connections = new HashMap<>();
     @NonNull
     private final String url;
     private final Connection connection;
     private Path path;
 
-    private DataBase(String url) throws SQLException {
+    private Database(String url) throws SQLException {
         this.url = url;
         connection = DriverManager.getConnection(url);
         initialize();
     }
 
-    private DataBase(Path path) throws SQLException {
+    private Database(Path path) throws SQLException {
         this(DEFAULT_DB_URL + path.toString());
         this.path = path;
     }
 
-    private static DataBase get(String url) throws SQLException {
-        return new DataBase(url);
+    private static Database get(String url) throws SQLException {
+        return new Database(url);
     }
 
-    public static DataBase get() throws SQLException {
+    public static Database get() throws SQLException {
         return get(DEFAULT_DB_URL);
     }
 
-    public static DataBase get(Path path) throws SQLException {
+    public static Database get(Path path) throws SQLException {
         if (!connections.containsKey(path)) {
-            connections.put(path, new DataBase(path));
+            connections.put(path, new Database(path));
         }
         return connections.get(path);
     }
 
     public static void removeDatabase(Path path) throws SQLException, IOException {
-        DataBase db = get(Objects.requireNonNull(path));
+        Database db = get(Objects.requireNonNull(path));
         if (!db.getConnection().isClosed()) {
             db.getConnection().close();
         }

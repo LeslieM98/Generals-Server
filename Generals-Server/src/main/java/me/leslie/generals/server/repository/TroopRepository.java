@@ -10,7 +10,7 @@ import me.leslie.generals.core.Vector2D;
 import me.leslie.generals.core.ViewDistance;
 import me.leslie.generals.core.entity.Troop;
 import me.leslie.generals.core.entity.Troop.TroopBuilder;
-import me.leslie.generals.server.persistance.DataBase;
+import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.repository.exception.CreationFailedException;
 import me.leslie.generals.server.repository.exception.DeletionFailedException;
 import me.leslie.generals.server.repository.exception.FetchFailedException;
@@ -30,7 +30,7 @@ import java.util.List;
 @Getter
 public class TroopRepository {
     @NonNull
-    private final DataBase dataBase;
+    private final Database dataBase;
 
     private static final String TABLE = "TROOP";
     private static final String ID_ROW = "id";
