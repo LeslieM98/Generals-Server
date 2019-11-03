@@ -3,7 +3,6 @@ package me.leslie.generals.server.eventhandler;
 import lombok.*;
 import me.leslie.generals.core.event.Movement;
 import me.leslie.generals.server.persistence.EventLogger;
-import me.leslie.generals.server.repository.TroopRepository;
 
 @AllArgsConstructor
 @ToString
@@ -12,11 +11,7 @@ import me.leslie.generals.server.repository.TroopRepository;
 public class MovementHandler {
     @NonNull
     private final EventLogger logger;
-    @NonNull
-    private final TroopRepository troopRepository;
 
     public void handleMovement(Movement event) {
-        troopRepository.updateTroop(event.getTroop().copy().position(event.getNewPosition()).build());
-        logger.log(event);
     }
 }

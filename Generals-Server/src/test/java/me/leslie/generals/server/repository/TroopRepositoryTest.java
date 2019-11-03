@@ -1,25 +1,28 @@
 package me.leslie.generals.server.repository;
 
-import me.leslie.generals.core.CombatRange;
-import me.leslie.generals.core.MovementSpeed;
-import me.leslie.generals.core.Vector2D;
-import me.leslie.generals.core.ViewDistance;
-import me.leslie.generals.core.entity.Troop;
-import me.leslie.generals.core.entity.Troop.TroopBuilder;
+import me.leslie.generals.core.entity.interfaces.ITroop;
+import me.leslie.generals.core.entity.pojos.Troop;
 import me.leslie.generals.server.persistence.Database;
-import me.leslie.generals.server.repository.exception.FetchFailedException;
+import me.leslie.generals.server.persistence.jooq.tables.daos.TroopDao;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DefaultConfiguration;
 import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TroopRepositoryTest {
+class TroopRepositoryTest {
+
+
     private Database database;
     private TroopRepository repository;
+
 
     @BeforeEach
     void setup() {
@@ -34,7 +37,9 @@ public class TroopRepositoryTest {
     @AfterEach
     void cleanUp() {
         try {
-            database.getConnection().close();
+
+            TroopDao jooq = new TroopDao(new DefaultConfiguration().set(database.getConnection()).set(SQLDialect.SQLITE));
+            jooq.delete(jooq.findAll());
         } catch (Exception e) {
             fail(e);
         }
@@ -42,38 +47,33 @@ public class TroopRepositoryTest {
 
     @Test
     void insertingAndQueryingCorrectData() {
-        TroopBuilder tb = Troop.builder()
-                .currentHealth(100)
-                .maxHealth(120)
-                .position(new Vector2D(120.2, 11.2))
-                .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
-                .combatRange(new CombatRange(1534.0, 1364.0))
-                .viewDistance(new ViewDistance(121235.3, 125.3, 51.3));
+        Troop localTroop = new Troop(0, 100, 120, 120.2, 11.2, 12.0, 13.0, 6245.0, 1534.0, 13644.0, 121235.3, 125.3, 51.3);
 
-        Troop localTroop = tb.id(1).build();
-        Troop createdTroop = repository.createTroop(tb);
-        Troop queriedTroop = repository.getTroop(createdTroop.getId());
+        ITroop createdTroop = repository.create(localTroop);
+        localTroop = new Troop(localTroop);
+        localTroop.setId(1);
+        ITroop queriedTroop = repository.get(localTroop.getId()).orElse(null);
 
-        assertTrue(Utils.deepEquality(localTroop, createdTroop));
-        assertTrue(Utils.deepEquality(localTroop, queriedTroop));
+        assertEquals(localTroop, createdTroop);
+        assertEquals(localTroop, queriedTroop);
     }
 
     @Test
     void getAllData() {
-        List<Troop> created = Utils.initializeTroops(repository);
-        List<Troop> queried = repository.getTroops();
+        List<ITroop> created = Utils.initializeTroops(repository);
+        List<? extends ITroop> queried = repository.get();
         assertEquals(created.size(), queried.size());
-        Seq.ofType(created.stream().sorted((x, y) -> (int) (x.getId() - y.getId())), Troop.class)
-                .zip(queried.stream().sorted((x, y) -> (int) (x.getId() - y.getId())))
-                .forEach(x -> assertTrue(Utils.deepEquality(x.v1(), x.v2())));
+        Seq.ofType(created.stream().sorted(Comparator.comparingInt(ITroop::getId)), ITroop.class)
+                .zip(queried.stream().sorted(Comparator.comparingInt(ITroop::getId)))
+                .forEach(x -> assertEquals(x.v1, x.v2));
     }
 
     @Test
     void deleteData() {
-        List<Troop> initialData = Utils.initializeTroops(repository);
-        Troop deleted = initialData.get(3);
-        repository.deleteTroop(deleted.getId());
-        List<Troop> allQueried = repository.getTroops();
+        List<ITroop> initialData = Utils.initializeTroops(repository);
+        ITroop deleted = initialData.get(3);
+        repository.delete(deleted.getId());
+        List<? extends ITroop> allQueried = repository.get();
 
         assertEquals(initialData.size() - 1, allQueried.size());
         assertFalse(allQueried.contains(deleted));
@@ -81,108 +81,90 @@ public class TroopRepositoryTest {
 
     @Test
     void getSingle() {
-        List<Troop> initialData = Utils.initializeTroops(repository);
-        Troop toQuery = initialData.get(3);
-        Troop recieved = repository.getTroop(toQuery.getId());
-        List<Troop> allData = repository.getTroops();
+        List<ITroop> initialData = Utils.initializeTroops(repository);
+        ITroop toQuery = initialData.get(3);
+        Optional<ITroop> received = repository.get(toQuery.getId());
+        List<? extends ITroop> allData = repository.get();
 
-        assertTrue(Utils.deepEquality(toQuery, recieved));
+        assertEquals(toQuery, received.orElse(null));
         assertTrue(allData.contains(toQuery));
     }
 
     @Test
     void getUnknownTroop() {
-        assertThrows(FetchFailedException.class, () -> repository.getTroop(111));
+        assertFalse(repository.get(111).isPresent());
     }
 
     @Test
-    void updateTroup() {
-        TroopBuilder tb = Troop.builder()
-                .currentHealth(100)
-                .maxHealth(100)
-                .position(new Vector2D(1.0, 1.0))
-                .movementSpeed(new MovementSpeed(1.0, 2.0, 3.0))
-                .combatRange(new CombatRange(1.0, 2.0))
-                .viewDistance(new ViewDistance(1.0, 2.0, 1.0));
+    void updateTroop() {
+        ITroop troop = new Troop(-200, 100, 100, 1.0, 1.0, 1.0, 2.0, 3.0, 1.0, 2.0, 1.0, 2.0, 1.0);
 
-        Troop initial = repository.createTroop(tb);
-        Troop updated = repository.updateTroop(initial.copy()
-                .currentHealth(90)
-                .maxHealth(110)
-                .position(new Vector2D(2.0, 3.0))
-                .movementSpeed(new MovementSpeed(2.0, 3.0, 4.0))
-                .combatRange(new CombatRange(2.0, 3.0))
-                .viewDistance(new ViewDistance(2.0, 3.0, 4.0))
-                .build());
+        ITroop initial = repository.create(troop);
+        Troop copy = new Troop(initial);
+        copy.setCurrentHealth(90);
+        copy.setMaxHealth(110);
+        copy.setPosX(2.0);
+        copy.setPosY(3.0);
+        copy.setNormalSpeed(2.0);
+        copy.setStreetSpeed(3.0);
+        copy.setDifficultTerrainSpeed(4.0);
+        copy.setCloseCombatRange(2.0);
+        copy.setRangedCombatRange(3.0);
+        copy.setNormalViewDistance(2.0);
+        copy.setDisadvantagedViewDistance(3.0);
+        copy.setAdvantagedViewDistance(4.0);
 
-        List<Troop> queried = repository.getTroops();
+        Optional<ITroop> updated = repository.update(copy);
 
+        List<? extends ITroop> queried = repository.get();
+
+        assertTrue(updated.isPresent());
         assertEquals(1, queried.size());
-        assertEquals(initial, updated);
-        assertFalse(Utils.deepEquality(initial, updated));
-        assertTrue(Utils.deepEquality(updated, queried.get(0)));
-    }
-
-    @Test
-    void getNonExistingTroop() {
-        assertThrows(FetchFailedException.class, () -> repository.getTroop(444));
-    }
-
-    @Test
-    void deleteUnknownTroop() {
-        assertFalse(repository.deleteTroop(444));
+        assertNotEquals(initial, updated.get());
+        assertEquals(updated.get(), queried.get(0));
     }
 
     @Test
     void updateUnknownTroop() {
-        repository.updateTroop(Troop.builder()
-                .id(200)
-                .currentHealth(90)
-                .maxHealth(110)
-                .position(new Vector2D(2.0, 3.0))
-                .movementSpeed(new MovementSpeed(2.0, 3.0, 4.0))
-                .combatRange(new CombatRange(2.0, 3.0))
-                .viewDistance(new ViewDistance(2.0, 3.0, 4.0))
-                .build());
+        ITroop troop = new Troop(-200, 100, 100, 1.0, 1.0, 1.0, 2.0, 3.0, 1.0, 2.0, 1.0, 2.0, 1.0);
+        assertFalse(repository.update(troop).isPresent());
+    }
+
+    @Test
+    void deleteUnknownTroop() {
+        assertFalse(repository.delete(444));
     }
 
     @Test
     void getSomeTroops() {
-        List<Troop> initialized = Utils.initializeTroops(repository);
-        List<Troop> fetched = repository.getTroops(List.of(1L, 2L, 3L));
-        Troop t1 = Troop.builder()
-                .id(1L)
-                .currentHealth(100)
-                .maxHealth(120)
-                .position(new Vector2D(120.2, 11.2))
-                .movementSpeed(new MovementSpeed(12.0, 13.0, 6245.0))
-                .combatRange(new CombatRange(1534.0, 1364.0))
-                .viewDistance(new ViewDistance(121235.3, 125.3, 51.3)).build();
+        List<ITroop> initialized = Utils.initializeTroops(repository);
+        List<? extends ITroop> fetched = repository.get(List.of(1, 2, 3));
 
-        Troop t2 = Troop.builder()
-                .id(2L)
-                .currentHealth(1)
-                .maxHealth(1240)
-                .position(new Vector2D(15320.2, 13441.2))
-                .movementSpeed(new MovementSpeed(1762.0, 13.0, 6245.0))
-                .combatRange(new CombatRange(1538634.0, 1364.0))
-                .viewDistance(new ViewDistance(12125635.3, 125.3, 5451.3)).build();
-
-        Troop t3 = Troop.builder()
-                .id(3L)
-                .currentHealth(16700)
-                .maxHealth(15620)
-                .position(new Vector2D(12820.2, 1561.2))
-                .movementSpeed(new MovementSpeed(15672.0, 13.0, 686245.0))
-                .combatRange(new CombatRange(1534.0, 1364.0))
-                .viewDistance(new ViewDistance(12121735.3, 12705.3, 5184.3)).build();
+        // ITroop t1 = new Troop(1,100,120,120.2, 11.2,12.0, 13.0, 6245.0,1534.0, 1364.0,121235.3, 125.3, 51.3);
+        // ITroop t2 = new Troop(2, 1, 1240, 15320.2, 13441.2, 1762.0, 13.0, 6245.0, 1538634.0, 1364.0, 12125635.3, 125.3, 5451.3);
+        // ITroop t3 = new Troop(3, 16700, 15620, 12820.2, 1561.2, 15672.0, 13.0, 686245.0, 1534.0, 1364.0, 12121735.3, 12705.3, 5184.3)
 
         assertEquals(3, fetched.size());
-        assertTrue(Utils.deepEquality(t1, fetched.get(0)));
-        assertTrue(Utils.deepEquality(t2, fetched.get(1)));
-        assertTrue(Utils.deepEquality(t3, fetched.get(2)));
-
+        assertEquals(initialized.get(0), fetched.get(0));
+        assertEquals(initialized.get(1), fetched.get(1));
+        assertEquals(initialized.get(2), fetched.get(2));
         assertTrue(initialized.containsAll(fetched));
+    }
 
+    @Test
+    void createDoesNotMutate() {
+        ITroop initial = new Troop(1, 100, 120, 120.2, 11.2, 12.0, 13.0, 6245.0, 1534.0, 1364.0, 121235.3, 125.3, 51.3);
+        ITroop copy = new Troop(initial);
+        repository.create(copy);
+        assertEquals(initial, copy);
+    }
+
+    @Test
+    void updateDoesNotMutate() {
+        ITroop initial = new Troop(1, 100, 120, 120.2, 11.2, 12.0, 13.0, 6245.0, 1534.0, 1364.0, 121235.3, 125.3, 51.3);
+        ITroop copy = new Troop(initial);
+        repository.create(copy);
+        repository.update(copy);
+        assertEquals(initial, copy);
     }
 }

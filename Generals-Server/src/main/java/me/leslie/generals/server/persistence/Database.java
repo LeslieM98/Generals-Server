@@ -6,61 +6,39 @@ import lombok.NonNull;
 import lombok.ToString;
 import me.leslie.generals.server.persistence.exception.InitializationException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @EqualsAndHashCode
 @ToString
 @Getter
 public class Database {
-    public static final String DEFAULT_DB_URL = "jdbc:sqlite:tmp.db";
-    private static final Map<Path, Database> connections = new HashMap<>();
+    public static final String DEFAULT_DB_URL = "jdbc:sqlite:";
     @NonNull
     private final String url;
     private final Connection connection;
-    private Path path;
 
-    private Database(String url) throws SQLException {
-        this.url = url;
-        connection = DriverManager.getConnection(url);
+    private static Database instance;
+
+    public static Database get() {
+        if (instance == null) {
+            instance = new Database(DEFAULT_DB_URL);
+        }
+        return instance;
+    }
+
+    private Database(String url) {
+        try {
+            this.connection = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            throw new InitializationException("Could not get Database connection", e);
+        }
         initialize();
+        this.url = url;
     }
 
-    private Database(Path path) throws SQLException {
-        this(DEFAULT_DB_URL + path.toString());
-        this.path = path;
-    }
-
-    private static Database get(String url) throws SQLException {
-        return new Database(url);
-    }
-
-    public static Database get() throws SQLException {
-        return get(DEFAULT_DB_URL);
-    }
-
-    public static Database get(Path path) throws SQLException {
-        if (!connections.containsKey(path)) {
-            connections.put(path, new Database(path));
-        }
-        return connections.get(path);
-    }
-
-    public static void removeDatabase(Path path) throws SQLException, IOException {
-        Database db = get(Objects.requireNonNull(path));
-        if (!db.getConnection().isClosed()) {
-            db.getConnection().close();
-        }
-        Files.deleteIfExists(path);
-    }
 
     private void initialize() {
         final String troopSchema = "CREATE TABLE IF NOT EXISTS TROOP(" +
@@ -77,17 +55,17 @@ public class Database {
                 "normal_view_distance DOUBLE NOT NULL," +
                 "disadvantaged_view_distance DOUBLE NOT NULL," +
                 "advantaged_view_distance DOUBLE NOT NULL" +
-                ")";
+                ");";
+
 
         final String armySchema = "CREATE TABLE IF NOT EXISTS ARMY(" +
-                "hq INTEGER NOT NULL," +
-                "troop INTEGER NOT NULL," +
+                "hq INTEGER," +
+                "troop INTEGER," +
                 "FOREIGN KEY(hq) REFERENCES TROOP(id)," +
                 "FOREIGN KEY(troop) REFERENCES TROOP(id)," +
-                "UNIQUE(troop)," +
-                "PRIMARY KEY (hq, troop)," +
-                "CHECK (hq != troop)" +
-                ")";
+                "UNIQUE(hq, troop)," +
+                "PRIMARY KEY (hq, troop)" +
+                ");";
 
         try (PreparedStatement sql = connection.prepareStatement(troopSchema)) {
             sql.execute();

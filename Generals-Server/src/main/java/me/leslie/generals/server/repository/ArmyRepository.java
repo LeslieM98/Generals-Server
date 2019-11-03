@@ -1,156 +1,131 @@
 package me.leslie.generals.server.repository;
 
-import lombok.*;
-import me.leslie.generals.core.entity.Army;
-import me.leslie.generals.core.entity.Army.ArmyBuilder;
-import me.leslie.generals.core.entity.Troop;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
+import me.leslie.generals.core.entity.interfaces.IArmy;
+import me.leslie.generals.core.entity.interfaces.IArmyComposition;
+import me.leslie.generals.core.entity.interfaces.ITroop;
+import me.leslie.generals.core.entity.pojos.Army;
+import me.leslie.generals.core.entity.pojos.ArmyComposition;
 import me.leslie.generals.server.persistence.Database;
-import me.leslie.generals.server.repository.exception.*;
+import me.leslie.generals.server.persistence.jooq.Tables;
+import me.leslie.generals.server.persistence.jooq.tables.daos.ArmyDao;
+import me.leslie.generals.server.repository.exception.DeletionFailedException;
+import me.leslie.generals.server.repository.exception.UpdateFailedException;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultConfiguration;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Getter
 @ToString
 @EqualsAndHashCode
 public class ArmyRepository {
 
-    private static final String TROOP_ROW = "troop";
-    private static final String HQ_ROW = "hq";
-    private static final String TABLE = "ARMY";
-
+    private static final SQLDialect SQL_DIALECT = SQLDialect.SQLITE;
     @NonNull
-    private final Database dataBase;
+    private final Database database;
+
+    private final Configuration configuration;
+    private final ArmyDao jooqDao;
+    private final DSLContext jooq;
 
     @NonNull
     private final TroopRepository troopRepository;
 
+    public ArmyRepository(Database database) {
+        this.database = database;
+        troopRepository = new TroopRepository(database);
+        configuration = new DefaultConfiguration().set(SQL_DIALECT).set(database.getConnection());
+        jooqDao = new ArmyDao();
+        jooq = DSL.using(database.getConnection(), SQL_DIALECT);
+    }
 
-    public Army createArmy(ArmyBuilder army) {
-        Connection connection = dataBase.getConnection();
-        String query = String.format("INSERT INTO %s (%s, %s) VALUES(?, ?)", TABLE, HQ_ROW, TROOP_ROW);
-        try (PreparedStatement sql = connection.prepareStatement(query)) {
-            Army instance = army.build();
-            for (var troop : instance.getTroops()) {
+    private Set<Army> transformToRelation(IArmyComposition army) {
+        return army.getTroops().stream().map(x -> new Army(army.getHQ().getId(), x.getId())).collect(Collectors.toSet());
+    }
 
-                sql.setLong(1, instance.getHq().getId());
-                sql.setLong(2, troop.getId());
-                sql.addBatch();
+    /**
+     * @param army
+     * @return
+     * @throws UpdateFailedException if HQ is not present in repo or any of the given troops are not present in the repo
+     */
+    public IArmyComposition updateRelation(IArmyComposition army) {
+        Collection<Army> relations = transformToRelation(army);
+        Collection<Integer> alreadyExisting = troopRepository.get(army.getTroops().stream()
+                .map(ITroop::getId)
+                .collect(Collectors.toSet()))
+                .stream()
+                .map(ITroop::getId).collect(Collectors.toSet());
+
+        if (alreadyExisting.contains(army.getHQ().getId())) {
+            throw new UpdateFailedException("HQ does not exist in Repo");
+        }
+        if (alreadyExisting.containsAll(relations)) {
+            throw new UpdateFailedException("Some troops are not existing in Repo");
+        }
+
+        jooq.delete(Tables.ARMY).where(Tables.ARMY.HQ.eq(army.getHQ().getId())).execute();
+        for (Army x : relations) {
+            try {
+                jooqDao.insert(x);
+            } catch (NullPointerException e) {
+                throw new UpdateFailedException("Could not insert " + x.toString(), e);
             }
-
-            sql.executeBatch();
-
-            return instance;
-        } catch (Exception e) {
-            throw new CreationFailedException("Could not Create Army", e);
         }
-
+        return army;
     }
 
-    public Army updateArmy(Army army) {
-        try {
-            deleteArmy(army);
-            return createArmy(army.copy());
-        } catch (DataException e) {
-            throw new UpdateFailedException("Could not update Army", e);
+    public void deleteRelations(IArmyComposition army) {
+        Set<Army> relations = transformToRelation(army);
+        jooqDao.delete(relations.toArray(new Army[0]));
+    }
+
+    public Optional<IArmyComposition> get(int hqID) {
+        List<? extends IArmy> relations = jooqDao.fetchByHq(hqID);
+        if (relations.isEmpty()) {
+            return Optional.empty();
         }
-    }
-
-    public void deleteArmy(Army army) {
-        Connection connection = dataBase.getConnection();
-        try (PreparedStatement sql = connection.prepareStatement(String.format("DELETE FROM %s WHERE hq = ?", TABLE))) {
-            sql.setLong(1, army.getHq().getId());
-            sql.execute();
-        } catch (SQLException e) {
-            throw new DeletionFailedException("Could not delete Troop", e);
+        Optional<ITroop> hq = troopRepository.get(hqID);
+        if (hq.isEmpty()) {
+            return Optional.empty();
         }
+        Set<? extends ITroop> troops = new HashSet<>(troopRepository.get(relations.stream()
+                .map(IArmy::getHq)
+                .collect(Collectors.toSet())));
+
+        ArmyComposition returned = new ArmyComposition(hq.get(), troops);
+        return Optional.of(returned);
     }
 
-    public Army get(long id) {
-        Connection connection = dataBase.getConnection();
-        try (PreparedStatement sql = connection.prepareStatement(String.format("SELECT * FROM %s WHERE %s = ?", TABLE, HQ_ROW))) {
-            sql.setLong(1, id);
-            try (ResultSet results = sql.executeQuery()) {
-                Troop hq = null;
-                List<Long> troops = new ArrayList<>();
-
-                while (results.next()) {
-                    if (hq == null) {
-                        hq = troopRepository.getTroop(results.getLong(HQ_ROW));
-                    }
-                    troops.add(results.getLong(TROOP_ROW));
-                }
-
-                if (hq == null) {
-                    return null;
-                }
-                return Army.builder().hq(hq).troops(troopRepository.getTroops(troops)).build();
-            }
-        } catch (SQLException e) {
-            throw new UpdateFailedException("Could not get Army", e);
-        }
+    public List<? extends IArmyComposition> get() {
+        return get(jooq.select(Tables.ARMY.HQ).from(Tables.ARMY).fetch().stream().map(Record1::component1).collect(Collectors.toList()));
     }
 
-    public List<Army> get() {
-        Connection connection = dataBase.getConnection();
-        try (PreparedStatement sql = connection.prepareStatement(String.format("SELECT * FROM %s", TABLE))) {
-            try (ResultSet results = sql.executeQuery()) {
-                Map<Long, Set<Long>> armies = new HashMap<>();
-
-                while (results.next()) {
-                    long hq = results.getLong(HQ_ROW);
-                    armies.putIfAbsent(hq, new HashSet<>());
-                    armies.get(hq).add(results.getLong(TROOP_ROW));
-                }
-
-                return armies.entrySet().stream()
-                        .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
-                        .collect(Collectors.toList());
-            }
-        } catch (SQLException e) {
-            throw new UpdateFailedException("Could not get Armies", e);
-        }
+    public List<? extends IArmyComposition> get(Collection<Integer> ids) {
+        return ids.stream()
+                .map(this::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
-    public List<Army> get(Collection<Long> ids) {
-        Connection connection = dataBase.getConnection();
-        StringBuilder idString = new StringBuilder();
-        ids.forEach(idString.append((idString.length() == 0) ? "" : ", ")::append);
-        try (PreparedStatement sql = connection.prepareStatement(String.format("Select * FROM %s WHERE %s in (%s)", TABLE, HQ_ROW, idString.toString()))) {
-            try (ResultSet results = sql.executeQuery()) {
-                Map<Long, Set<Long>> armies = new HashMap<>();
-
-                while (results.next()) {
-                    long hq = results.getLong(HQ_ROW);
-                    armies.putIfAbsent(hq, new HashSet<>());
-                    armies.get(hq).add(results.getLong(TROOP_ROW));
-                }
-
-                return armies.entrySet().stream()
-                        .map(x -> Army.builder().hq(troopRepository.getTroop(x.getKey())).troops(troopRepository.getTroops(x.getValue())).build())
-                        .collect(Collectors.toList());
-            }
-        } catch (SQLException e) {
-            throw new FetchFailedException("Could not get Armies", e);
-        }
+    public void delete(int hqID) {
+        jooq.delete(Tables.ARMY).where(Tables.ARMY.HQ.eq(hqID)).execute();
     }
 
-    public Army removeFromArmy(Army army, Collection<Troop> troops) {
-        List<Troop> updatedTroops = new ArrayList<>(army.getTroops());
-        updatedTroops.removeAll(troops);
-        return updateArmy(army.copy().troops(updatedTroops).build());
+    public void delete(Collection<Integer> hqIDs) {
+        jooq.delete(Tables.ARMY).where(hqIDs.stream()
+                .map(Tables.ARMY.HQ::eq)
+                .reduce(Condition::or)
+                .orElseThrow(() -> {
+                    throw new DeletionFailedException("Could not reduce condition");
+                }));
     }
 
-    public Army addToArmy(Army army, Collection<Troop> troop) {
-        List<Troop> troops = new ArrayList<>();
-        troops.addAll(army.getTroops());
-        troops.addAll(troop);
-        return updateArmy(army.copy().troops(troops).build());
-    }
 
 }

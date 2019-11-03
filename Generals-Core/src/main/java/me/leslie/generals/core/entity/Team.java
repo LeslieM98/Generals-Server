@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import me.leslie.generals.core.Color;
+import me.leslie.generals.core.entity.pojos.ArmyComposition;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Team implements Serializable {
     @NonNull
     private final Color color;
     @NonNull
-    private final List<Army> armies;
+    private final List<ArmyComposition> armies;
 
     @Override
     public boolean equals(Object o) {

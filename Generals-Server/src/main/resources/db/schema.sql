@@ -15,11 +15,10 @@ CREATE TABLE IF NOT EXISTS TROOP(
 );
 
 CREATE TABLE IF NOT EXISTS ARMY(
-    id INTEGER,
-    hq INTEGER,
-    troop INTEGER,
-    FOREIGN KEY(hq) REFERENCES TROOP(id),
-    FOREIGN KEY(troop) REFERENCES TROOP(id),
-    UNIQUE(hq, troop),
-    PRIMARY KEY (id, hq, troop)
+                                   hq    INTEGER,
+                                   troop INTEGER,
+                                   FOREIGN KEY (hq) REFERENCES TROOP (id),
+                                   FOREIGN KEY (troop) REFERENCES TROOP (id),
+                                   UNIQUE (hq, troop),
+                                   PRIMARY KEY (hq, troop)
 );
