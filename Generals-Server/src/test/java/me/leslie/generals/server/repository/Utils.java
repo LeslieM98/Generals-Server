@@ -1,9 +1,12 @@
 package me.leslie.generals.server.repository;
 
+import me.leslie.generals.core.entity.interfaces.IArmyComposition;
 import me.leslie.generals.core.entity.interfaces.ITroop;
+import me.leslie.generals.core.entity.pojos.ArmyComposition;
 import me.leslie.generals.core.entity.pojos.Troop;
 import org.jooq.lambda.Seq;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,13 +41,13 @@ public class Utils {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-//    static List<Army> initializeArmies(ArmyRepository repository) {
-//        List<Troop> troops = initializeTroops(repository.getTroopRepository());
-//        List<Army> armies = new ArrayList<>();
-//        ArmyBuilder army1 = Army.builder().hq(troops.get(0)).troops(List.of(troops.get(1)));
-//        ArmyBuilder army2 = Army.builder().hq(troops.get(2)).troops(List.of(troops.get(3), troops.get(4)));
-//        armies.add(repository.createArmy(army1));
-//        armies.add(repository.createArmy(army2));
-//        return armies;
-//    }
+    static List<IArmyComposition> initializeArmies(ArmyRepository repository) {
+        List<ITroop> troops = initializeTroops(repository.getTroopRepository());
+        List<IArmyComposition> armies = new ArrayList<>();
+        IArmyComposition army1 = new ArmyComposition(troops.get(0), List.of(troops.get(1)));
+        IArmyComposition army2 = new ArmyComposition(troops.get(2), List.of(troops.get(3), troops.get(4)));
+        armies.add(repository.updateRelation(army1));
+        armies.add(repository.updateRelation(army2));
+        return armies;
+    }
 }

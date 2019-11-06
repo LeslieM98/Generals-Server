@@ -41,8 +41,8 @@ public class ArmyRepository {
         this.database = database;
         troopRepository = new TroopRepository(database);
         configuration = new DefaultConfiguration().set(SQL_DIALECT).set(database.getConnection());
-        jooqDao = new ArmyDao();
-        jooq = DSL.using(database.getConnection(), SQL_DIALECT);
+        jooqDao = new ArmyDao(configuration);
+        jooq = DSL.using(configuration);
     }
 
     private Set<Army> transformToRelation(IArmyComposition army) {
@@ -63,10 +63,26 @@ public class ArmyRepository {
                 .map(ITroop::getId).collect(Collectors.toSet());
 
         if (alreadyExisting.contains(army.getHQ().getId())) {
-            throw new UpdateFailedException("HQ does not exist in Repo");
+            throw new UpdateFailedException("HQ does not exist in TroopRepo");
         }
         if (alreadyExisting.containsAll(relations)) {
-            throw new UpdateFailedException("Some troops are not existing in Repo");
+            throw new UpdateFailedException("Some troops are not existing in TroopRepo");
+        }
+
+        var troopsExistingInOtherArmies = relations
+                .stream()
+                .map(IArmy::getTroop)
+                .map(jooqDao::fetchByTroop)
+                .reduce(new ArrayList<>(), (x, y) -> {
+                    x.addAll(y);
+                    return x;
+                })
+                .stream()
+                .filter(x -> x.getHq() != army.getHQ().getId()
+                ).collect(Collectors.toSet());
+
+        if (!troopsExistingInOtherArmies.isEmpty()) {
+            throw new UpdateFailedException(String.format("Troops {%s} already in other Army", troopsExistingInOtherArmies.stream().map(Object::toString).reduce("", (x, y) -> x + ", " + y)));
         }
 
         jooq.delete(Tables.ARMY).where(Tables.ARMY.HQ.eq(army.getHQ().getId())).execute();
@@ -95,7 +111,7 @@ public class ArmyRepository {
             return Optional.empty();
         }
         Set<? extends ITroop> troops = new HashSet<>(troopRepository.get(relations.stream()
-                .map(IArmy::getHq)
+                .map(IArmy::getTroop)
                 .collect(Collectors.toSet())));
 
         ArmyComposition returned = new ArmyComposition(hq.get(), troops);
