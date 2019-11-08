@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
-public class DomaineventHandlerInitializer {
+public class DomaineventHandlerInjector {
     private final TroopRepository troopRepository;
     private final ArmyRepository armyRepository;
 
-    public Map<Class<? extends DomainEvent>, ? extends DomainEventHandler> getInitializedDomainEventHandlers() {
+    public Map<Class<? extends DomainEvent>, ? extends DomainEventHandler> initializeDomaineventHandlers() {
         return Seq.ofType(loadDomainEventHandlers().stream(), DomainEventHandler.class.getClass())
                 .map(this::initialize)
                 .map(x -> new Tuple2<>(x.getHandledEventType(), x))
