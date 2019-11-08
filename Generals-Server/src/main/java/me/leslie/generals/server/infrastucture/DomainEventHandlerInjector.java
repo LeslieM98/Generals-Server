@@ -5,7 +5,6 @@ import lombok.Getter;
 import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
 import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
-import org.jooq.lambda.Seq;
 import org.joor.Reflect;
 import org.reflections.Reflections;
 
@@ -21,10 +20,9 @@ public class DomainEventHandlerInjector {
 
 
     public List<? extends DomainEventHandler> initializeDomainEventHandlers() {
-        // Since this stream consists of Class<? extends DomainEventHandler> Objects, and not of DomainEventHandler Objects
-        //noinspection ClassGetClass
-        return Seq.ofType(loadDomainEventHandlers().stream(), DomainEventHandler.class.getClass())
+        return loadDomainEventHandlers().stream()
                 .map(this::initialize)
+                .map(this::inject)
                 .collect(Collectors.toList());
     }
 
@@ -34,7 +32,12 @@ public class DomainEventHandlerInjector {
     }
 
     private DomainEventHandler initialize(Class<? extends DomainEventHandler> clazz) {
-        DomainEventHandler domainEventHandler = Reflect.onClass(clazz).create().get();
+        return Reflect.onClass(clazz)
+                .create()
+                .get();
+    }
+
+    private DomainEventHandler inject(DomainEventHandler domainEventHandler) {
         domainEventHandler.setTroopRepository(troopRepository);
         domainEventHandler.setArmyRepository(armyRepository);
         return domainEventHandler;
