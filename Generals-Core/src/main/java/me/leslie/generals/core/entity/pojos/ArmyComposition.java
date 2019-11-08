@@ -1,26 +1,27 @@
 package me.leslie.generals.core.entity.pojos;
 
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import me.leslie.generals.core.entity.interfaces.IArmyComposition;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-
-@EqualsAndHashCode
+@ToString
 public class ArmyComposition implements IArmyComposition, Serializable {
     private ITroop hq;
-    private Set<? extends ITroop> troops;
+    private List<? extends ITroop> troops;
 
     public ArmyComposition(@NonNull ITroop hq, @NonNull Collection<? extends ITroop> troops) {
         validate(hq, troops);
-        this.hq = hq;
-        this.troops = new HashSet<>(troops);
+        this.hq = new Troop(hq);
+        this.troops = new ArrayList<>(troops);
+    }
+
+    public ArmyComposition(@NonNull IArmyComposition other) {
+        this(other.getHQ(), other.getTroops());
     }
 
     private void validate(ITroop hq, Collection<? extends ITroop> troops) {
@@ -38,8 +39,8 @@ public class ArmyComposition implements IArmyComposition, Serializable {
     }
 
     @Override
-    public Set<? extends ITroop> getTroops() {
-        return Collections.unmodifiableSet(troops);
+    public List<? extends ITroop> getTroops() {
+        return Collections.unmodifiableList(troops);
     }
 
     public void setHq(@NonNull ITroop hq) {
@@ -49,6 +50,21 @@ public class ArmyComposition implements IArmyComposition, Serializable {
 
     public void setTroops(@NonNull Collection<? extends ITroop> troops) {
         validate(hq, troops);
-        this.troops = new HashSet<>(troops);
+        this.troops = new ArrayList<>(troops);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArmyComposition that = (ArmyComposition) o;
+        return hq.equals(that.hq) &&
+                troops.size() == that.troops.size() &&
+                troops.containsAll(that.troops);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hq, troops.stream().sorted(Comparator.comparingInt(x -> x.getId())).collect(Collectors.toList()));
     }
 }

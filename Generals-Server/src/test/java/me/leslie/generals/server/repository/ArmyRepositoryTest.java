@@ -3,20 +3,25 @@ package me.leslie.generals.server.repository;
 import me.leslie.generals.core.entity.interfaces.IArmyComposition;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 import me.leslie.generals.core.entity.pojos.ArmyComposition;
+import me.leslie.generals.core.entity.pojos.Troop;
 import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.persistence.jooq.tables.daos.ArmyDao;
 import me.leslie.generals.server.persistence.jooq.tables.daos.TroopDao;
 import me.leslie.generals.server.repository.exception.UpdateFailedException;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
+import org.jooq.lambda.Seq;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static me.leslie.generals.server.repository.Utils.initializeArmies;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArmyRepositoryTest {
@@ -73,84 +78,133 @@ public class ArmyRepositoryTest {
     @Test
     void deleteTroupFromArmy() {
         List<IArmyComposition> armies =
-                Utils.initializeArmies(armyRepository);
-        IArmyComposition oldArmy = armies.get(1);
-        List<? extends ITroop> updatedTroops = new ArrayList<>(oldArmy.getTroops());
+                initializeArmies(armyRepository);
+        IArmyComposition initialArmy = armies.get(1);
+        List<? extends ITroop> updatedTroops = new ArrayList<>(initialArmy.getTroops());
         ITroop toRemove = updatedTroops.iterator().next();
         updatedTroops.remove(toRemove);
 
-        IArmyComposition toUpdate = new ArmyComposition(oldArmy.getHQ(), updatedTroops);
+        IArmyComposition toUpdate = new ArmyComposition(initialArmy.getHQ(), updatedTroops);
 
         IArmyComposition updated = armyRepository.updateRelation(toUpdate);
-        Optional<IArmyComposition> fetched = armyRepository.get(oldArmy.getHQ().getId());
+        Optional<IArmyComposition> fetched = armyRepository.get(initialArmy.getHQ().getId());
 
-        assertNotEquals(toUpdate, oldArmy);
+        assertNotEquals(toUpdate, initialArmy);
         assertTrue(fetched.isPresent());
         assertFalse(fetched.get().getTroops().contains(toRemove));
         assertEquals(toUpdate, fetched.get());
         assertEquals(toUpdate, updated);
     }
+
+    @Test
+    void addTroupToArmy() {
+        List<IArmyComposition> armies = initializeArmies(armyRepository);
+        ITroop toAdd = troopRepository.create(new Troop(0, 1010, 12560, 12620.2, 1751.2, 12.0, 13.0, 6245.0, 1751534.0, 1364.0, 12168235.3, 12557.3, 5186.3));
+
+        IArmyComposition initialArmy = armies.get(0);
+        List<ITroop> toUpdate = new ArrayList<>(initialArmy.getTroops());
+        toUpdate.add(toAdd);
+
+        IArmyComposition updated = armyRepository.updateRelation(new ArmyComposition(initialArmy.getHQ(), toUpdate));
+        Optional<IArmyComposition> fetched = armyRepository.get(initialArmy.getHQ().getId());
+
+        assertTrue(fetched.isPresent());
+        assertNotEquals(initialArmy, updated);
+        assertEquals(updated, fetched.get());
+        assertTrue(updated.getTroops().contains(toAdd));
+        assertTrue(updated.getTroops().containsAll(toUpdate));
+    }
+
+    @Test
+    void testGetCertainTroops() {
+        List<IArmyComposition> armies = initializeArmies(armyRepository);
+        List<? extends IArmyComposition> allFetched = armyRepository.get(armies.stream().map(x -> x.getHQ().getId()).collect(Collectors.toList()));
+        List<? extends IArmyComposition> onlyFirst = armyRepository.get(List.of(armies.get(0).getHQ().getId()));
+        List<? extends IArmyComposition> onlySecond = armyRepository.get(List.of(armies.get(1).getHQ().getId()));
+
+        assertTrue(Seq.ofType(armies.stream().sorted(Comparator.comparingInt(x -> x.getHQ().getId())), IArmyComposition.class)
+                .zip(allFetched.stream().sorted(Comparator.comparingInt(x -> x.getHQ().getId())))
+                .map(x -> x.v1().equals(x.v2()))
+                .reduce(true, (x, y) -> x && y));
+
+        assertEquals(onlyFirst.get(0), armies.get(0));
+        assertEquals(onlySecond.get(0), armies.get(1));
+    }
+
+    @Test
+    void updateTroops() {
+        List<IArmyComposition> armies = initializeArmies(armyRepository);
+        ITroop notRemoved = armies.get(1).getTroops().get(0);
+        ITroop removed = armies.get(1).getTroops().get(1);
+        IArmyComposition toUpdate = new ArmyComposition(armies.get(1).getHQ(), List.of(notRemoved));
+        IArmyComposition created = armyRepository.updateRelation(toUpdate);
+        Optional<IArmyComposition> fetched = armyRepository.get(toUpdate.getHQ().getId());
+
+
+        assertTrue(fetched.isPresent());
+        assertEquals(toUpdate, created);
+        assertEquals(toUpdate, fetched.get());
+
+        assertEquals(troopRepository.get(removed.getId()).get(), removed);
+
+        toUpdate = new ArmyComposition(toUpdate);
+        ((ArmyComposition) toUpdate).setTroops(List.of(removed, notRemoved));
+        created = armyRepository.updateRelation(toUpdate);
+        fetched = armyRepository.get(toUpdate.getHQ().getId());
+
+        assertEquals(toUpdate, created);
+        assertEquals(toUpdate, fetched.get());
+
+        assertEquals(troopRepository.get(removed.getId()).get(), removed);
+    }
+
+    @Test
+    void deleteSingleByComposition() {
+        List<IArmyComposition> armies = initializeArmies(armyRepository);
+        IArmyComposition deleted = armies.get(0);
+        Optional<IArmyComposition> fetched = armyRepository.get(deleted.getHQ().getId());
+
+        assertTrue(armyRepository.get().contains(deleted));
+        assertTrue(fetched.isPresent());
+        assertEquals(deleted, fetched.get());
+
+        armyRepository.deleteRelations(deleted);
+        fetched = armyRepository.get(deleted.getHQ().getId());
+
+        assertTrue(fetched.isEmpty());
+        assertFalse(armyRepository.get().contains(deleted));
+    }
+
+    @Test
+    void deleteSingleById() {
+        List<IArmyComposition> armies = initializeArmies(armyRepository);
+        IArmyComposition deleted = armies.get(0);
+        Optional<IArmyComposition> fetched = armyRepository.get(deleted.getHQ().getId());
+
+        assertTrue(armyRepository.get().contains(deleted));
+        assertTrue(fetched.isPresent());
+        assertEquals(deleted, fetched.get());
+
+        armyRepository.delete(deleted.getHQ().getId());
+        fetched = armyRepository.get(deleted.getHQ().getId());
+
+        assertTrue(fetched.isEmpty());
+        assertFalse(armyRepository.get().contains(deleted));
+    }
+
+    @Test
+    void deleteMultiple() {
+        List<IArmyComposition> initialized = initializeArmies(armyRepository);
+        List<? extends IArmyComposition> fetched = armyRepository.get();
+
+        assertEquals(initialized.size(), fetched.size());
+        assertTrue(fetched.containsAll(initialized));
+        armyRepository.delete(initialized.stream().map(x -> x.getHQ().getId()).collect(Collectors.toList()));
+        fetched = armyRepository.get();
+
+        assertTrue(fetched.isEmpty());
+    }
+
+
 }
-/*
- *
- * @Test void deleteTroupFromArmy() { List<Army> armies =
- * initializeArmies(armyRepository); Troop toRemove =
- * armies.get(1).getTroops().get(0); Army fetched =
- * armyRepository.removeFromArmy(armies.get(1), List.of(toRemove));
- * assertFalse(fetched.getTroops().contains(toRemove));
- * assertFalse(armyRepository.get(armies.get(1).getID()).getTroops().contains(
- * toRemove)); assertNotNull(troopRepository.getTroop(toRemove.getId())); }
- *
- * @Test void addTroupToArmy() { List<Army> armies =
- * initializeArmies(armyRepository); Troop toAdd =
- * troopRepository.createTroop(Troop.builder() .currentHealth(1010)
- * .maxHealth(12560) .position(new Vector2D(12620.2, 1751.2)) .movementSpeed(new
- * MovementSpeed(12.0, 13.0, 6245.0)) .combatRange(new CombatRange(1751534.0,
- * 1364.0)) .viewDistance(new ViewDistance(12168235.3, 12557.3, 5186.3)));
- *
- * Army initial = armies.get(0); Army created =
- * armyRepository.addToArmy(initial, List.of(toAdd)); Army fetched =
- * armyRepository.get(initial.getID());
- *
- * assertTrue(deepEquality(created, fetched));
- * assertTrue(created.getTroops().contains(toAdd)); }
- *
- * @Test void testGetCertainTroops() { List<Army> armies =
- * initializeArmies(armyRepository); List<Army> allFetched =
- * armyRepository.get(armies.stream().map(Army::getID).collect(Collectors.toList
- * ())); List<Army> onlyFirst =
- * armyRepository.get(List.of(armies.get(0).getID())); List<Army> onlySecond =
- * armyRepository.get(List.of(armies.get(1).getID()));
- *
- * assertTrue(Seq.ofType(armies.stream().sorted(Comparator.comparingInt(x ->
- * (int) x.getID())), Army.class)
- * .zip(allFetched.stream().sorted(Comparator.comparingInt(x -> (int)
- * x.getID()))) .map(x -> deepEquality(x.v1(), x.v2())) .reduce(true, (x, y) ->
- * x && y));
- *
- * assertTrue(deepEquality(onlyFirst.get(0), armies.get(0)));
- * assertTrue(deepEquality(onlySecond.get(0), armies.get(1))); }
- *
- * @Test void updateTroops() { List<Army> armies =
- * initializeArmies(armyRepository); Troop notRemoved =
- * armies.get(1).getTroops().get(0); Troop removed =
- * armies.get(1).getTroops().get(1); Army toUpdate =
- * armies.get(1).copy().troops(List.of(notRemoved)).build(); Army created =
- * armyRepository.updateArmy(toUpdate); Army fetched =
- * armyRepository.get(toUpdate.getID());
- *
- * assertTrue(deepEquality(toUpdate, created));
- * assertTrue(deepEquality(toUpdate, fetched));
- *
- * assertTrue(deepEquality(troopRepository.getTroop(removed.getId()), removed));
- *
- * toUpdate = toUpdate.copy().troops(List.of(removed, notRemoved)).build();
- * created = armyRepository.updateArmy(toUpdate); fetched =
- * armyRepository.get(toUpdate.getID());
- *
- * assertTrue(deepEquality(toUpdate, created));
- * assertTrue(deepEquality(toUpdate, fetched));
- *
- * assertTrue(deepEquality(troopRepository.getTroop(removed.getId()), removed));
- * } }
- */
+

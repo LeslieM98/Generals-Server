@@ -12,9 +12,10 @@ import me.leslie.generals.core.entity.pojos.ArmyComposition;
 import me.leslie.generals.server.persistence.Database;
 import me.leslie.generals.server.persistence.jooq.Tables;
 import me.leslie.generals.server.persistence.jooq.tables.daos.ArmyDao;
-import me.leslie.generals.server.repository.exception.DeletionFailedException;
 import me.leslie.generals.server.repository.exception.UpdateFailedException;
-import org.jooq.*;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 
@@ -119,7 +120,9 @@ public class ArmyRepository {
     }
 
     public List<? extends IArmyComposition> get() {
-        return get(jooq.select(Tables.ARMY.HQ).from(Tables.ARMY).fetch().stream().map(Record1::component1).collect(Collectors.toList()));
+        Set<Integer> hqIds = jooqDao.findAll().stream().map(IArmy::getHq).collect(Collectors.toSet());
+        List<IArmyComposition> results = hqIds.stream().map(this::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        return results;
     }
 
     public List<? extends IArmyComposition> get(Collection<Integer> ids) {
@@ -135,12 +138,7 @@ public class ArmyRepository {
     }
 
     public void delete(Collection<Integer> hqIDs) {
-        jooq.delete(Tables.ARMY).where(hqIDs.stream()
-                .map(Tables.ARMY.HQ::eq)
-                .reduce(Condition::or)
-                .orElseThrow(() -> {
-                    throw new DeletionFailedException("Could not reduce condition");
-                }));
+        jooq.delete(Tables.ARMY).where(Tables.ARMY.HQ.in(hqIDs)).execute();
     }
 
 
