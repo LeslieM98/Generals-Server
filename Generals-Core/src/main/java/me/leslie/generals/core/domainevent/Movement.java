@@ -1,9 +1,9 @@
-package me.leslie.generals.core.event;
+package me.leslie.generals.core.domainevent;
 
 
 import lombok.*;
 import me.leslie.generals.core.Vector2D;
-import me.leslie.generals.core.entity.Troop;
+import me.leslie.generals.core.entity.interfaces.ITroop;
 
 @Getter
 @AllArgsConstructor
@@ -11,7 +11,7 @@ import me.leslie.generals.core.entity.Troop;
 @EqualsAndHashCode
 public class Movement {
     @NonNull
-    private final Troop troop;
+    private final ITroop troop;
     @NonNull
     private final Vector2D newPosition;
 }

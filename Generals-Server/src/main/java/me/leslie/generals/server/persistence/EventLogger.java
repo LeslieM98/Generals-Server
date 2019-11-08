@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import me.leslie.generals.core.event.Attack;
-import me.leslie.generals.core.event.Movement;
-import me.leslie.generals.core.event.TroopCreation;
+import me.leslie.generals.core.domainevent.Attack;
+import me.leslie.generals.core.domainevent.Movement;
+import me.leslie.generals.core.domainevent.TroopCreation;
 
 import java.util.Map;
 

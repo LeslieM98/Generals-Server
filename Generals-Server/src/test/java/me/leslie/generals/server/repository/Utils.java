@@ -15,22 +15,6 @@ public class Utils {
     private Utils() {
     }
 
-//    static boolean deepEquality(ArmyComposition expected, ArmyComposition actual) {
-//        if (expected == actual) {
-//            return true;
-//        }
-//        Objects.requireNonNull(expected, "expected is null");
-//        Objects.requireNonNull(actual, "actual is null");
-//
-//        boolean equals = expected.getID() == actual.getID();
-//        equals &= deepEquality(expected.getHq(), actual.getHq());
-//        equals &= expected.getTroops().size() == actual.getTroops().size();
-//        equals &= Seq.ofType(expected.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getId())), Troop.class)
-//                .zip(actual.getTroops().stream().sorted(Comparator.comparingInt(x -> (int) x.getId())))
-//                .map(x -> deepEquality(x.v1(), x.v2())).reduce(true, (x, y) -> x && y);
-//        return equals;
-//    }
-
     static List<ITroop> initializeTroops(TroopRepository repository) {
         return Seq.of(new Troop(0, 100, 120, 120.2, 11.2, 12.0, 13.0, 6245.0, 1534.0, 1364.0, 121235.3, 125.3, 51.3),
                 new Troop(0, 1, 1240, 15320.2, 13441.2, 1762.0, 13.0, 6245.0, 1538634.0, 1364.0, 12125635.3, 125.3, 5451.3),

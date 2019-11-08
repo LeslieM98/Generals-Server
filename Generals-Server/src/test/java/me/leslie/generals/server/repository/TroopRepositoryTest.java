@@ -140,10 +140,6 @@ class TroopRepositoryTest {
         List<ITroop> initialized = Utils.initializeTroops(repository);
         List<? extends ITroop> fetched = repository.get(List.of(1, 2, 3));
 
-        // ITroop t1 = new Troop(1,100,120,120.2, 11.2,12.0, 13.0, 6245.0,1534.0, 1364.0,121235.3, 125.3, 51.3);
-        // ITroop t2 = new Troop(2, 1, 1240, 15320.2, 13441.2, 1762.0, 13.0, 6245.0, 1538634.0, 1364.0, 12125635.3, 125.3, 5451.3);
-        // ITroop t3 = new Troop(3, 16700, 15620, 12820.2, 1561.2, 15672.0, 13.0, 686245.0, 1534.0, 1364.0, 12121735.3, 12705.3, 5184.3)
-
         assertEquals(3, fetched.size());
         assertEquals(initialized.get(0), fetched.get(0));
         assertEquals(initialized.get(1), fetched.get(1));
