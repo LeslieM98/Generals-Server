@@ -1,7 +1,7 @@
 package me.leslie.generals.server.infrastructure;
 
 import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
-import me.leslie.generals.server.infrastucture.DomaineventHandlerInjector;
+import me.leslie.generals.server.infrastucture.DomainEventHandlerInjector;
 import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,11 @@ import org.reflections.Reflections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class DomainEventHandlerInjectorTest {
+class DomainEventHandlerInjectorTest {
     @Test
     void injectionTest() {
         TroopRepository troopRepository = mock(TroopRepository.class);
@@ -22,17 +23,13 @@ public class DomainEventHandlerInjectorTest {
         Set<Class<? extends DomainEventHandler>> domainEventHandlerClasses = reflections.getSubTypesOf(DomainEventHandler.class);
 
 
-        DomaineventHandlerInjector domaineventHandlerInjector = new DomaineventHandlerInjector(troopRepository, armyRepository);
-        var domaineventHandler = domaineventHandlerInjector.initializeDomaineventHandlers().entrySet();
+        DomainEventHandlerInjector domaineventHandlerInjector = new DomainEventHandlerInjector(troopRepository, armyRepository);
+        var domainEventHandler = domaineventHandlerInjector.initializeDomainEventHandlers();
 
-        assertTrue(domaineventHandler.stream().map(x -> x.getValue().getClass()).collect(Collectors.toSet()).containsAll(domainEventHandlerClasses));
-        assertEquals(domainEventHandlerClasses.size(), domaineventHandler.size());
-        assertFalse(domaineventHandler.stream().map(x -> x.getValue().getClass()).collect(Collectors.toSet()).contains(DomainEventHandler.class));
+        assertTrue(domainEventHandler.stream().map(Object::getClass).collect(Collectors.toList()).containsAll(domainEventHandlerClasses));
+        assertEquals(domainEventHandlerClasses.size(), domainEventHandler.size());
 
-        domaineventHandler.forEach(x -> assertEquals(x.getValue().getHandledEventType(), x.getKey()));
-        domaineventHandler.forEach(x -> assertEquals(armyRepository, x.getValue().getArmyRepository()));
-        domaineventHandler.forEach(x -> assertEquals(troopRepository, x.getValue().getTroopRepository()));
-
-
+        domainEventHandler.forEach(x -> assertEquals(armyRepository, x.getArmyRepository()));
+        domainEventHandler.forEach(x -> assertEquals(troopRepository, x.getTroopRepository()));
     }
 }

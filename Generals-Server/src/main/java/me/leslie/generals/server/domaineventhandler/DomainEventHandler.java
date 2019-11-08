@@ -8,12 +8,12 @@ import me.leslie.generals.server.repository.TroopRepository;
 
 @Getter
 @Setter
-public abstract class DomainEventHandler {
+public abstract class DomainEventHandler<T extends DomainEvent> {
 
     private TroopRepository troopRepository;
     private ArmyRepository armyRepository;
 
-    public abstract Class<? extends DomainEvent> getHandledEventType();
+    public abstract Class<T> getHandledEventType();
 
-    public abstract void handle(DomainEvent event);
+    public abstract void handle(T event);
 }
