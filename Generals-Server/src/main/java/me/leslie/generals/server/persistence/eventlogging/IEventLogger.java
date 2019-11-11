@@ -1,4 +1,4 @@
-package me.leslie.generals.server.persistence;
+package me.leslie.generals.server.persistence.eventlogging;
 
 import me.leslie.generals.core.domainevent.DomainEvent;
 

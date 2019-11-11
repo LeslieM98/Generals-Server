@@ -4,7 +4,7 @@ import me.leslie.generals.core.domainevent.DomainEvent;
 import me.leslie.generals.core.domainevent.TroopCreation;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
-import me.leslie.generals.server.persistence.IEventLogger;
+import me.leslie.generals.server.persistence.eventlogging.IEventLogger;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -33,6 +33,5 @@ public class DomainEventDistributorTest {
 
         distributor.distribute(eventType2);
         verify(handler2).handle(eventType2);
-
     }
 }

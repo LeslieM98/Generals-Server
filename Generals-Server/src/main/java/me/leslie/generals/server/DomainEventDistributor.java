@@ -5,7 +5,7 @@ import lombok.Getter;
 import me.leslie.generals.core.domainevent.DomainEvent;
 import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
 import me.leslie.generals.server.infrastucture.DomainEventHandlerInjector;
-import me.leslie.generals.server.persistence.IEventLogger;
+import me.leslie.generals.server.persistence.eventlogging.IEventLogger;
 import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
 
