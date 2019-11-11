@@ -10,17 +10,17 @@ import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
 
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Getter
 public class DomainEventDistributor {
-    private Map<Class<? extends DomainEvent>, ? extends DomainEventHandler<DomainEvent>> handlers;
+    private Map<Class<? extends DomainEvent>, DomainEventHandler<DomainEvent>> handlers;
     private IEventLogger eventLogger;
 
     public void distribute(DomainEvent domainEvent){
-        handlers.get(domainEvent.getClass()).handle(domainEvent);
+        var handler = handlers.get(domainEvent.getClass());
+        handler.handle(domainEvent);
     }
 
     public static DomainEventDistributor create(TroopRepository troopRepository, ArmyRepository armyRepository){
