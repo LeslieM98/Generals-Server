@@ -18,13 +18,21 @@ public class DomainEventDistributor {
     private Map<Class<? extends DomainEvent>, DomainEventHandler<DomainEvent>> handlers;
     private IEventLogger eventLogger;
 
-    public void distribute(DomainEvent domainEvent){
+    public void distribute(DomainEvent domainEvent) {
         var handler = handlers.get(domainEvent.getClass());
         handler.handle(domainEvent);
     }
 
-    public static DomainEventDistributor create(TroopRepository troopRepository, ArmyRepository armyRepository){
-        var handlers = new DomainEventHandlerInjector(troopRepository, armyRepository).initializeDomainEventHandlers().stream().collect(Collectors.toUnmodifiableMap(DomainEventHandler::getHandledEventType, x -> x));
-        throw new UnsupportedOperationException("Not implemented yet");
+    public static DomainEventDistributor create(TroopRepository troopRepository, ArmyRepository armyRepository, IEventLogger eventLogger) {
+        Map<Class<? extends DomainEvent>, DomainEventHandler<DomainEvent>> handlers = new DomainEventHandlerInjector(troopRepository, armyRepository)
+                .initializeDomainEventHandlers()
+                .stream()
+                .collect(
+                        Collectors.toUnmodifiableMap(
+                                DomainEventHandler::getHandledEventType,
+                                x -> x
+                        )
+                );
+        return new DomainEventDistributor(handlers, eventLogger);
     }
 }
