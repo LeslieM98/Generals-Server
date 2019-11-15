@@ -6,22 +6,19 @@ import lombok.NonNull;
 import lombok.ToString;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 
-import java.util.Date;
-
 @Getter
 @EqualsAndHashCode
 @ToString
-public class Attack implements DomainEvent {
+public class Attack extends DomainEvent {
     @NonNull
     private final ITroop source;
     @NonNull
     private final ITroop target;
     private final int damage;
 
-    @NonNull
-    private final Date creationDate;
+    public Attack(@NonNull ITroop source, @NonNull ITroop target, int damage, int iterationID) {
+        super(iterationID);
 
-    public Attack(@NonNull ITroop source, @NonNull ITroop target, int damage, Date creationDate) {
         if (damage <= 0) {
             throw new IllegalStateException("Damage must be at least 1");
         }
@@ -33,6 +30,5 @@ public class Attack implements DomainEvent {
         this.source = source;
         this.target = target;
         this.damage = damage;
-        this.creationDate = creationDate;
     }
 }

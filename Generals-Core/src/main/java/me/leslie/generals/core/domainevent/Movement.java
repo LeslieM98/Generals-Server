@@ -1,21 +1,25 @@
 package me.leslie.generals.core.domainevent;
 
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
 import me.leslie.generals.core.Vector2D;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 
-import java.util.Date;
-
 @Getter
-@AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Movement implements DomainEvent {
+public class Movement extends DomainEvent {
     @NonNull
     private final ITroop troop;
     @NonNull
     private final Vector2D newPosition;
-    @NonNull
-    private final Date creationDate;
+
+    public Movement(ITroop troop, Vector2D newPosition, int iterationID) {
+        super(iterationID);
+        this.troop = troop;
+        this.newPosition = newPosition;
+    }
 }

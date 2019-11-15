@@ -10,7 +10,6 @@ import me.leslie.generals.server.repository.TroopRepository;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class DomainEventDistributorTest {
     void testCorrectDistribution() {
         HashMap<Class<? extends DomainEvent>, DomainEventHandler<DomainEvent>> handlers = new HashMap<>();
         DomainEvent eventType1 = mock(DomainEvent.class);
-        DomainEvent eventType2 = new TroopCreation(mock(ITroop.class), mock(Date.class));
+        DomainEvent eventType2 = new TroopCreation(mock(ITroop.class), 0);
         DomainEventHandler<DomainEvent> handler1 = mock(DomainEventHandler.class);
         DomainEventHandler<DomainEvent> handler2 = mock(DomainEventHandler.class);
 
