@@ -4,11 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @EqualsAndHashCode
-public abstract class DomainEvent implements Comparable<DomainEvent> {
+public abstract class DomainEvent implements Comparable<DomainEvent>, Serializable {
     @NonNull
     private Date creationDate;
     private int iterationID;
