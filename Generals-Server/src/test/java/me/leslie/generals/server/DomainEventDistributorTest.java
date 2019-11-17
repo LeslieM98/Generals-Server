@@ -23,7 +23,7 @@ public class DomainEventDistributorTest {
     void testCorrectDistribution() {
         HashMap<Class<? extends DomainEvent>, DomainEventHandler<DomainEvent>> handlers = new HashMap<>();
         DomainEvent eventType1 = mock(DomainEvent.class);
-        DomainEvent eventType2 = new TroopCreation(mock(ITroop.class), 0);
+        DomainEvent eventType2 = new TroopCreation(mock(ITroop.class));
         DomainEventHandler<DomainEvent> handler1 = mock(DomainEventHandler.class);
         DomainEventHandler<DomainEvent> handler2 = mock(DomainEventHandler.class);
 

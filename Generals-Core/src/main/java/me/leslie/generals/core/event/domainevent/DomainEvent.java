@@ -12,18 +12,13 @@ import java.util.Date;
 public abstract class DomainEvent implements Comparable<DomainEvent>, Serializable {
     @NonNull
     private Date creationDate;
-    private int iterationID;
 
-    public DomainEvent(int iterationID) {
-        if (iterationID < 0) {
-            throw new IllegalStateException("IterationID cannot be negative");
-        }
+    public DomainEvent() {
         this.creationDate = new Date();
-        this.iterationID = iterationID;
     }
 
     @Override
-    public int compareTo(DomainEvent domainEvent) {
-        return iterationID - domainEvent.iterationID;
+    public int compareTo(DomainEvent o) {
+        return creationDate.compareTo(o.creationDate);
     }
 }

@@ -17,8 +17,7 @@ public class Movement extends DomainEvent {
     @NonNull
     private final Vector2D newPosition;
 
-    public Movement(ITroop troop, Vector2D newPosition, int iterationID) {
-        super(iterationID);
+    public Movement(ITroop troop, Vector2D newPosition) {
         this.troop = troop;
         this.newPosition = newPosition;
     }

@@ -11,8 +11,7 @@ import me.leslie.generals.core.entity.interfaces.ITroop;
 public class TroopCreation extends DomainEvent {
     private final ITroop troop;
 
-    public TroopCreation(ITroop troop, int iterationID) {
-        super(iterationID);
+    public TroopCreation(ITroop troop) {
         this.troop = troop;
     }
 }

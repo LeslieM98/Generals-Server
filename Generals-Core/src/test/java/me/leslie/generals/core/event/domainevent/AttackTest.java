@@ -13,21 +13,21 @@ class AttackTest {
     void testCorrectCreation() {
         ITroop t1 = mock(Troop.class);
         ITroop t2 = mock(Troop.class);
-        Attack a = new Attack(t1, t2, 9, 0);
+        Attack a = new Attack(t1, t2, 9);
         assertNotNull(a);
     }
 
     @Test
     void testSameTroops() {
         ITroop t1 = mock(Troop.class);
-        assertThrows(IllegalStateException.class, () -> new Attack(t1, t1, 9, 0));
+        assertThrows(IllegalStateException.class, () -> new Attack(t1, t1, 9));
     }
 
     @Test
     void testInvalidAttackDamage() {
         ITroop t1 = mock(Troop.class);
         ITroop t2 = mock(Troop.class);
-        assertThrows(IllegalStateException.class, () -> new Attack(t1, t2, 0, 0));
-        assertThrows(IllegalStateException.class, () -> new Attack(t1, t2, -1, 0));
+        assertThrows(IllegalStateException.class, () -> new Attack(t1, t2, 0));
+        assertThrows(IllegalStateException.class, () -> new Attack(t1, t2, -1));
     }
 }

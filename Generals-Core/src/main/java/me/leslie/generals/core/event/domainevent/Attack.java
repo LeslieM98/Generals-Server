@@ -16,9 +16,7 @@ public class Attack extends DomainEvent {
     private final ITroop target;
     private final int damage;
 
-    public Attack(@NonNull ITroop source, @NonNull ITroop target, int damage, int iterationID) {
-        super(iterationID);
-
+    public Attack(@NonNull ITroop source, @NonNull ITroop target, int damage) {
         if (damage <= 0) {
             throw new IllegalStateException("Damage must be at least 1");
         }

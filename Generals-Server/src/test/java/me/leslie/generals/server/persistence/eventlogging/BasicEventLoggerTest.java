@@ -20,7 +20,6 @@ class BasicEventLoggerTest {
         private int i;
 
         public DummyEvent(int i) {
-            super(i);
             this.i = i;
         }
 
