@@ -1,7 +1,7 @@
 package me.leslie.generals.server.persistence.eventlogging;
 
 import lombok.AllArgsConstructor;
-import me.leslie.generals.core.domainevent.DomainEvent;
+import me.leslie.generals.core.event.domainevent.DomainEvent;
 
 import java.io.*;
 import java.util.*;

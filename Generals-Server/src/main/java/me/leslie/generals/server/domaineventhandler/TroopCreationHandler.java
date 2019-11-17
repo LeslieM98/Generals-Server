@@ -1,6 +1,6 @@
 package me.leslie.generals.server.domaineventhandler;
 
-import me.leslie.generals.core.domainevent.TroopCreation;
+import me.leslie.generals.core.event.domainevent.TroopCreation;
 
 public class TroopCreationHandler extends DomainEventHandler<TroopCreation> {
 
