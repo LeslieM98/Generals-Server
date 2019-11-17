@@ -1,4 +1,4 @@
-package me.leslie.generals.core.domainevent;
+package me.leslie.generals.core.event.domainevent;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

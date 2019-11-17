@@ -2,7 +2,7 @@ package me.leslie.generals.server.persistence.eventlogging;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.leslie.generals.core.domainevent.DomainEvent;
+import me.leslie.generals.core.event.domainevent.DomainEvent;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;

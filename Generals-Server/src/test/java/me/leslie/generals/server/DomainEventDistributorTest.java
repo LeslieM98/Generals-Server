@@ -1,7 +1,7 @@
 package me.leslie.generals.server;
 
-import me.leslie.generals.core.domainevent.DomainEvent;
-import me.leslie.generals.core.domainevent.TroopCreation;
+import me.leslie.generals.core.event.domainevent.DomainEvent;
+import me.leslie.generals.core.event.domainevent.TroopCreation;
 import me.leslie.generals.core.entity.interfaces.ITroop;
 import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
 import me.leslie.generals.server.persistence.eventlogging.IEventLogger;

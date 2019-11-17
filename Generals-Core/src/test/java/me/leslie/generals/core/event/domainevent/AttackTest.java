@@ -1,4 +1,4 @@
-package me.leslie.generals.core.domainevent;
+package me.leslie.generals.core.event.domainevent;
 
 import me.leslie.generals.core.entity.interfaces.ITroop;
 import me.leslie.generals.core.entity.pojos.Troop;
