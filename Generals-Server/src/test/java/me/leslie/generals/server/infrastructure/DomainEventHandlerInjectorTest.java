@@ -1,6 +1,6 @@
 package me.leslie.generals.server.infrastructure;
 
-import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
+import me.leslie.generals.server.eventhandler.domaineventhandler.DomainEventHandler;
 import me.leslie.generals.server.infrastucture.DomainEventHandlerInjector;
 import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;

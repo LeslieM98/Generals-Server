@@ -1,4 +1,4 @@
-package me.leslie.generals.server.domaineventhandler;
+package me.leslie.generals.server.eventhandler.domaineventhandler;
 
 import lombok.Getter;
 import lombok.Setter;

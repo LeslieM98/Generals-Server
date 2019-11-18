@@ -1,4 +1,4 @@
-package me.leslie.generals.server.domaineventhandler;
+package me.leslie.generals.server.eventhandler.domaineventhandler;
 
 import me.leslie.generals.core.event.domainevent.TroopCreation;
 

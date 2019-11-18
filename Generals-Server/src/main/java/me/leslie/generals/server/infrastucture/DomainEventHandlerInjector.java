@@ -2,7 +2,7 @@ package me.leslie.generals.server.infrastucture;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.leslie.generals.server.domaineventhandler.DomainEventHandler;
+import me.leslie.generals.server.eventhandler.domaineventhandler.DomainEventHandler;
 import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
 import org.joor.Reflect;
