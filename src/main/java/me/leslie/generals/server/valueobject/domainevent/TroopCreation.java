@@ -1,18 +1,14 @@
 package me.leslie.generals.server.valueobject.domainevent;
 
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import me.leslie.generals.server.model.Troop;
+import lombok.Value;
+import me.leslie.generals.server.valueobject.TroopID;
 
-@Getter
-@ToString
-@EqualsAndHashCode
+@Value
 public class TroopCreation extends DomainEvent {
-    private final Troop troop;
+    private final TroopID troop;
 
-    public TroopCreation(Troop troop) {
+    public TroopCreation(TroopID troop) {
         this.troop = troop;
     }
 }

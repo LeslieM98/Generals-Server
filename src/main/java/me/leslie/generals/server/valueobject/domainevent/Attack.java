@@ -2,17 +2,17 @@ package me.leslie.generals.server.valueobject.domainevent;
 
 import lombok.NonNull;
 import lombok.Value;
-import me.leslie.generals.server.model.Troop;
+import me.leslie.generals.server.valueobject.TroopID;
 
 @Value
 public class Attack extends DomainEvent {
     @NonNull
-    private final Troop source;
+    private final TroopID source;
     @NonNull
-    private final Troop target;
+    private final TroopID target;
     private final int damage;
 
-    public Attack(@NonNull Troop source, @NonNull Troop target, int damage) {
+    public Attack(@NonNull TroopID source, @NonNull TroopID target, int damage) {
         if (damage <= 0) {
             throw new IllegalStateException("Damage must be at least 1");
         }
