@@ -1,6 +1,6 @@
 package me.leslie.generals.server.rest;
 
-import me.leslie.generals.server.valueobject.Army;
+import me.leslie.generals.server.model.Army;
 import me.leslie.generals.server.valueobject.TroopID;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
