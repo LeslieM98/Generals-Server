@@ -1,9 +1,11 @@
 package me.leslie.generals.server.valueobject.domainevent;
 
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import me.leslie.generals.server.valueobject.TroopID;
 
+@EqualsAndHashCode(callSuper = true)
 @Value
 public class Attack extends DomainEvent {
     @NonNull

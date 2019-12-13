@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class AttackTest {
-    private TroopID t1 = new TroopID(1);
-    private TroopID t2 = new TroopID(2);
+    private final TroopID t1 = new TroopID(1);
+    private final TroopID t2 = new TroopID(2);
     @Test
     void testCorrectCreation() {
         Attack a = new Attack(t1, t2, 9);

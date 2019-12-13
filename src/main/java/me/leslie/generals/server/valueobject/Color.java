@@ -1,7 +1,5 @@
 package me.leslie.generals.server.valueobject;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.Value;
 
 import java.io.Serializable;
