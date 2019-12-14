@@ -1,6 +1,6 @@
 package me.leslie.generals.server.model;
 
-import lombok.*;
+import lombok.Value;
 import me.leslie.generals.server.valueobject.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,8 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Troop {
     @Id
     TroopID id;
-    Integer currentHealth;
-    Integer maxHealth;
+    Health health;
     Vector2D position;
     MovementSpeed movementSpeed;
     CombatRange combatRange;
