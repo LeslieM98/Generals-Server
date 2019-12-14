@@ -1,33 +1,24 @@
 package me.leslie.generals.server.valueobject;
 
 import lombok.Value;
+import me.leslie.generals.server.util.Validators;
 
 @Value
 public class Health {
     int maximum;
     int current;
 
-    public Health(int maximum, int current){
-        validate(maximum, current);
-        this.maximum = maximum;
-        this.current = current;
+   public Health(int maximum, int current){
+        this.maximum = Validators.isPositive(maximum, "Maximum cannot be 0 or negative");
+        this.current = validateCurrent(maximum, current);
     }
 
-    private void validate(int maximum, int current){
-        validateMaximum(maximum);
-        validateCurrent(maximum, current);
-    }
 
-    private void validateCurrent(int maximum, int current){
+    private int validateCurrent(int maximum, int current){
         if(current > maximum){
-            throw new IllegalStateException("Current cannot be higher than maximum");
+            throw new IllegalStateException("Current cannot be greater than maximum");
         }
-    }
-
-    private void validateMaximum(int maximum){
-        if(maximum <= 0){
-            throw new IllegalStateException("Maximum cannot be 0 or negative");
-        }
+        return current;
     }
 
     public boolean isDead(){
