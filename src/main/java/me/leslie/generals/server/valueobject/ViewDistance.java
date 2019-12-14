@@ -11,8 +11,8 @@ public class ViewDistance {
     double advantaged;
 
     public ViewDistance(double normal, double disadvantaged, double advantaged) {
-        this.normal = Validators.isPositive(normal, "Normal view distance has to be positive");
-        this.disadvantaged = Validators.isPositive(disadvantaged, "disadvantaged view distance has to be positive");
-        this.advantaged = Validators.isPositive(advantaged, "advantaged view distance has to be positive");
+        this.normal = Validators.isPositive(normal, "Normal view distance is not positive");
+        this.disadvantaged = Validators.isPositive(disadvantaged, "disadvantaged view distance is not positive");
+        this.advantaged = Validators.isPositive(advantaged, "advantaged view distance is not positive");
     }
 }

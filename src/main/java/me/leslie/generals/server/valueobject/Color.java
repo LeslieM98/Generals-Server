@@ -36,16 +36,16 @@ public class Color implements Serializable {
 
     private static int parseBlue(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue Blue in hex has to be 6 characters long");
+            throw new IllegalStateException("Hex blue is not 6 characters long");
         }
         return Integer.parseInt(hex.substring(4, 6), 16);
     }
 
-    private int verifyColorValue(int colourValue) {
-        if (colourValue <= 255 && colourValue >= 0) {
-            return colourValue;
+    private int verifyColorValue(int colorValue) {
+        if (colorValue <= 255 && colorValue >= 0) {
+            return colorValue;
         } else {
-            throw new IllegalStateException("Colourvalue has to be between 255 and 0");
+            throw new IllegalStateException("value is not between 255 and 0");
         }
     }
 

@@ -9,14 +9,14 @@ public class Health {
     int current;
 
    public Health(int maximum, int current){
-        this.maximum = Validators.isPositive(maximum, "Maximum cannot be 0 or negative");
-        this.current = validateCurrent(maximum, current);
+        this.maximum = Validators.isPositive(maximum, "Maximum is not positive");
+       this.current = validateCurrent(maximum, current);
     }
 
 
     private int validateCurrent(int maximum, int current){
         if(current > maximum){
-            throw new IllegalStateException("Current cannot be greater than maximum");
+            throw new IllegalStateException("Current is greater than maximum");
         }
         return current;
     }

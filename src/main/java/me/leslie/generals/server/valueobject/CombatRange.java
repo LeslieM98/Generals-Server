@@ -10,7 +10,7 @@ public class CombatRange {
     double ranged;
 
     public CombatRange(double close, double ranged) {
-        this.close = Validators.isPositive(close, "Close range has to be positive");
-        this.ranged = Validators.isPositive(ranged, "Ranged has to be positive");
+        this.close = Validators.isPositive(close, "Close range is not positive");
+        this.ranged = Validators.isPositive(ranged, "Ranged is not positive");
     }
 }
