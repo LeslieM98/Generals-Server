@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 @Value
 public class Color implements Serializable {
-    private final int red;
-    private final int green;
-    private final int blue;
+    int red;
+    int green;
+    int blue;
 
     public Color(int red, int green, int blue) {
         this.red = verifyColorValue(red);
@@ -22,14 +22,14 @@ public class Color implements Serializable {
 
     private static int parseRed(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue Red in hex has to be 6 characters long");
+            throw new IllegalStateException("Hex red has to be 6 characters long");
         }
         return Integer.parseInt(hex.substring(0, 2), 16);
     }
 
     private static int parseGreen(String hex) {
         if (hex.length() != 6) {
-            throw new IllegalStateException("Colorvalue Green in hex has to be 6 characters long");
+            throw new IllegalStateException("Hex green has to be 6 characters long");
         }
         return Integer.parseInt(hex.substring(2, 4), 16);
     }
