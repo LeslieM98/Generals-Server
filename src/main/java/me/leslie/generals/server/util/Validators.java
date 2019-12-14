@@ -17,4 +17,10 @@ public class Validators {
         }
         return value;
     }
+
+    public static void areNotEqual(Object a, Object b, String message) {
+        if(a.equals(b)){
+            throw new IllegalStateException(message);
+        }
+    }
 }

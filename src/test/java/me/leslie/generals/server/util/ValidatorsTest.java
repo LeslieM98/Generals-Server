@@ -69,4 +69,36 @@ public class ValidatorsTest {
         }
     }
 
+    static class areNotEqual {
+        @Test
+        void unequalObjects() {
+            Integer i1 = 1;
+            Integer i2 = 2;
+
+            assertDoesNotThrow(() -> Validators.areNotEqual(i1, i2, "Should never show up anywhere"));
+        }
+
+        @Test
+        void equalObjects() {
+            Integer i1 = 1;
+            Integer i2 = 1;
+            assertThrows(IllegalStateException.class, () ->  Validators.areNotEqual(i1, i2,"Should show up"));
+        }
+
+        @Test
+        void zeroValue() {
+            Integer i = 1;
+            assertThrows(IllegalStateException.class, () ->  Validators.areNotEqual(i, i,"Should show up"));
+        }
+
+        @Test
+        void correctMessageInException() {
+            Integer i = 1;
+            try {
+                assertThrows(IllegalStateException.class, () -> Validators.areNotEqual(i, i,"Should show up"));
+            } catch (Exception e) {
+                assertEquals("Should show up", e.getMessage());
+            }
+        }
+    }
 }
