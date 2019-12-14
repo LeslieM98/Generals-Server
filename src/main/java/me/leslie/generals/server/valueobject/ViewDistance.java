@@ -10,9 +10,9 @@ public class ViewDistance {
     double advantaged;
 
     public ViewDistance(double normal, double disadvantaged, double advantaged) {
-        this.normal = verifyValue(normal, "Value Normal has to be positive");
-        this.disadvantaged = verifyValue(disadvantaged, "Value disadvantaged has to be positive");
-        this.advantaged = verifyValue(advantaged, "Value advantaged has to be positive");
+        this.normal = verifyValue(normal, "Normal view distance has to be positive");
+        this.disadvantaged = verifyValue(disadvantaged, "disadvantaged view distance has to be positive");
+        this.advantaged = verifyValue(advantaged, "advantaged view distance has to be positive");
     }
 
     private double verifyValue(double value, String message) {
