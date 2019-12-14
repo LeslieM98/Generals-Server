@@ -3,6 +3,7 @@ package me.leslie.generals.server.valueobject.domainevent;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
+import me.leslie.generals.server.util.Validators;
 import me.leslie.generals.server.valueobject.TroopID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -15,16 +16,10 @@ public class Attack extends DomainEvent {
     private final int damage;
 
     public Attack(@NonNull TroopID source, @NonNull TroopID target, int damage) {
-        if (damage <= 0) {
-            throw new IllegalStateException("Damage must be at least 1");
-        }
-
-        if (source.equals(target)) {
-            throw new IllegalStateException("Source and Target cannot be the same");
-        }
-
+        Validators.areNotEqual(source, target, "Source and Target are equal");
         this.source = source;
         this.target = target;
-        this.damage = damage;
+        this.damage = Validators.isPositive(damage, "Damage must be at least 1");
     }
+
 }
