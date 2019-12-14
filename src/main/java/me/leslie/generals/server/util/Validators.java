@@ -10,4 +10,11 @@ public class Validators {
         }
         return value;
     }
+
+    public static int isPositive(int value, String message) {
+        if (value <= 0) {
+            throw new IllegalStateException(message);
+        }
+        return value;
+    }
 }
