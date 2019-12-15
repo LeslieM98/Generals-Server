@@ -19,7 +19,7 @@ public class Troop {
     public Troop recieveDamage(int damage) {
         return new Troop(
                 id,
-                new Health(health.getMaximum(), health.getCurrent() - damage),
+                health.recieveDamage(damage),
                 position,
                 movementSpeed,
                 combatRange,

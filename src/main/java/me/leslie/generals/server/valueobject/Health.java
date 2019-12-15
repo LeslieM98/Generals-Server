@@ -13,7 +13,6 @@ public class Health {
         this.current = validateCurrent(maximum, current);
     }
 
-
     private int validateCurrent(int maximum, int current) {
         if (current > maximum) {
             throw new IllegalStateException("Current is greater than maximum");
