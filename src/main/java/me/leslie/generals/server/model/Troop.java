@@ -26,4 +26,15 @@ public class Troop {
                 viewDistance
         );
     }
+
+    public Troop move(Vector2D updatedPosition) {
+        return new Troop(
+                id,
+                health,
+                updatedPosition,
+                movementSpeed,
+                combatRange,
+                viewDistance
+        );
+    }
 }

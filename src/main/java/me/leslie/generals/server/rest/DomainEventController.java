@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import me.leslie.generals.server.model.Troop;
 import me.leslie.generals.server.repository.TroopRepository;
 import me.leslie.generals.server.valueobject.event.domain.Attack;
+import me.leslie.generals.server.valueobject.event.domain.Movement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,23 @@ public class DomainEventController {
         Troop targetValue = target.get();
         troopRepository.save(targetValue.recieveDamage(attack.getDamage()));
         logger.info("Attack request successful for: {}", attack);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "movement")
+    public ResponseEntity<String> movement(@RequestBody String json) {
+        Movement movement = new Gson().fromJson(json, Movement.class);
+
+        Optional<Troop> troop = troopRepository.findById(movement.getTroop());
+        if (troop.isEmpty()) {
+            String errorMessage = "Unknown troop";
+            logger.info("Movement request failed ({}) for: {}", errorMessage, movement);
+            return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+        }
+
+        Troop troopValue = troop.get();
+        troopRepository.save(troopValue.move(movement.getNewPosition()));
+        logger.info("Movement request successful for: {}", movement);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
