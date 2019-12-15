@@ -16,23 +16,23 @@ public class HealthTest {
     }
 
     @Test
-    void zeroMaximum(){
+    void zeroMaximum() {
         assertThrows(IllegalStateException.class, () -> new Health(0, 0));
     }
 
     @Test
-    void negativeMaximum(){
+    void negativeMaximum() {
         assertThrows(IllegalStateException.class, () -> new Health(-1, -1));
     }
 
 
     @Test
-    void currentAboveMaximum(){
+    void currentAboveMaximum() {
         assertThrows(IllegalStateException.class, () -> new Health(100, 101));
     }
 
     @Test
-    void isAlive(){
+    void isAlive() {
         Health h1 = new Health(100, 100);
         Health h2 = new Health(100, 1);
         Health h3 = new Health(100, 50);
@@ -50,7 +50,7 @@ public class HealthTest {
     }
 
     @Test
-    void isDead(){
+    void isDead() {
         Health h1 = new Health(100, 0);
         Health h2 = new Health(100, -1);
         Health h3 = new Health(1, 0);
@@ -65,5 +65,29 @@ public class HealthTest {
         assertFalse(h2.isAlive());
         assertFalse(h3.isAlive());
         assertFalse(h4.isAlive());
+    }
+
+    @Test
+    void setCurrentCorrectValues() {
+        int changedAmount = 5;
+        Health subject = new Health(10, 10);
+        Health changed = subject.setCurrent(changedAmount);
+        Health notChanged = subject.setCurrent(10);
+
+        assertNotSame(subject, changed);
+        assertNotSame(subject, notChanged);
+
+        assertEquals(subject.getMaximum(), changed.getMaximum());
+        assertEquals(subject.getMaximum(), notChanged.getMaximum());
+
+        assertEquals(subject, notChanged);
+        assertEquals(changedAmount, changed.getCurrent());
+    }
+
+    @Test
+    void setCurrentIncorrectValues() {
+        int changedAmount = 12;
+        Health subject = new Health(10, 10);
+        assertThrows(IllegalStateException.class, () -> subject.setCurrent(changedAmount));
     }
 }

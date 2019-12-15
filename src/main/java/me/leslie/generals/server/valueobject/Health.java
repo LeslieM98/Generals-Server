@@ -21,11 +21,15 @@ public class Health {
         return current;
     }
 
-    public boolean isDead(){
+    public boolean isDead() {
         return current <= 0;
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         return !isDead();
+    }
+
+    public Health setCurrent(int current) {
+        return new Health(maximum, current);
     }
 }
