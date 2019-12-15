@@ -1,4 +1,4 @@
-package me.leslie.generals.server.valueobject.domainevent;
+package me.leslie.generals.server.valueobject.event.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

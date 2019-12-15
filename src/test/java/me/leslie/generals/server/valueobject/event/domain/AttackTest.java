@@ -1,4 +1,4 @@
-package me.leslie.generals.server.valueobject.domainevent;
+package me.leslie.generals.server.valueobject.event.domain;
 
 import me.leslie.generals.server.valueobject.TroopID;
 import org.junit.jupiter.api.Test;
