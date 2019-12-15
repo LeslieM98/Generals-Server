@@ -47,6 +47,7 @@ public class TroopController {
 
     @GetMapping(value = "getall")
     public Iterable<Troop> getAll() {
+        logger.info("Getall request successful");
         return troopRepository.findAll();
     }
 
