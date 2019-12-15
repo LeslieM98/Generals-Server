@@ -1,7 +1,9 @@
 package me.leslie.generals.server.rest;
 
 import com.google.gson.Gson;
+import me.leslie.generals.server.model.Army;
 import me.leslie.generals.server.model.Troop;
+import me.leslie.generals.server.repository.ArmyRepository;
 import me.leslie.generals.server.repository.TroopRepository;
 import me.leslie.generals.server.valueobject.TroopID;
 import org.slf4j.Logger;
@@ -11,17 +13,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/troop/*")
 public class TroopController {
     private final TroopRepository troopRepository;
+    private final ArmyRepository armyRepository;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public TroopController(TroopRepository troopRepository) {
+    public TroopController(TroopRepository troopRepository, ArmyRepository armyRepository) {
         this.troopRepository = troopRepository;
+        this.armyRepository = armyRepository;
+    }
+
+    private void deleteTroopFromArmy(TroopID troopID, ArmyRepository armyRepository) {
+        List<Army> armies = new ArrayList<>();
+        armyRepository.findAll().forEach(armies::add);
+
+        for (var army : armies) {
+            if (army.getTroopIDS().contains(troopID)) {
+                Set<TroopID> updatedTroops = new HashSet<>(army.getTroopIDS());
+                updatedTroops.remove(troopID);
+                Army updatedArmy = new Army(army.getHq(), updatedTroops);
+                armyRepository.save(updatedArmy);
+            }
+        }
     }
 
     @PutMapping(value = "save")
@@ -41,6 +59,7 @@ public class TroopController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         troopRepository.deleteById(troopID);
+        deleteTroopFromArmy(troopID, armyRepository);
         logger.info("Delete request successful for: {}", troopID);
         return new ResponseEntity<>(troop.get(), HttpStatus.OK);
     }

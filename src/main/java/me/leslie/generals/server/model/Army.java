@@ -12,5 +12,6 @@ import java.util.Set;
 public class Army {
     @Id
     TroopID hq;
-    Set<TroopID> troops;
+
+    Set<TroopID> troopIDS;
 }

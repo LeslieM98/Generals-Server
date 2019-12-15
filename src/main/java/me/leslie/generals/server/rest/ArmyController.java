@@ -34,11 +34,11 @@ public class ArmyController {
 
     private List<TroopID> findNonMatching(Army army, TroopRepository troopRepository) {
         List<Troop> fetchedTrooops = new ArrayList<>();
-        troopRepository.findAllById(army.getTroops()).forEach(fetchedTrooops::add);
+        troopRepository.findAllById(army.getTroopIDS()).forEach(fetchedTrooops::add);
         return fetchedTrooops
                 .stream()
                 .map(Troop::getId)
-                .filter(army.getTroops()::contains)
+                .filter(army.getTroopIDS()::contains)
                 .collect(Collectors.toList());
     }
 
