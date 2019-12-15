@@ -90,4 +90,38 @@ public class HealthTest {
         Health subject = new Health(10, 10);
         assertThrows(IllegalStateException.class, () -> subject.setCurrent(changedAmount));
     }
+
+    @Test
+    void recieveDamageCorrectValues() {
+        int damage = 5;
+        Health subject = new Health(10, 10);
+        Health updated = subject.recieveDamage(damage);
+
+        assertNotSame(subject, updated);
+        assertEquals(subject.getMaximum(), subject.getCurrent());
+
+        assertEquals(subject.getCurrent() - damage, updated.getCurrent());
+    }
+
+    @Test
+    void recieveDamageIncorrectValues() {
+        Health subject = new Health(10, 10);
+        assertThrows(IllegalStateException.class, () -> subject.recieveDamage(0));
+        try {
+            subject.recieveDamage(0);
+        } catch (Exception e) {
+            String message = e.getMessage().toLowerCase();
+            assertTrue(message.contains("damage"));
+            assertTrue(message.contains("0"));
+        }
+
+        assertThrows(IllegalStateException.class, () -> subject.recieveDamage(-100));
+        try {
+            subject.recieveDamage(-100);
+        } catch (Exception e) {
+            String message = e.getMessage().toLowerCase();
+            assertTrue(message.contains("damage"));
+            assertTrue(message.contains("negative"));
+        }
+    }
 }

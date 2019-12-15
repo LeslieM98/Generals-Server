@@ -8,14 +8,14 @@ public class Health {
     int maximum;
     int current;
 
-   public Health(int maximum, int current){
+    public Health(int maximum, int current) {
         this.maximum = Validators.isPositive(maximum, "Maximum is not positive");
-       this.current = validateCurrent(maximum, current);
+        this.current = validateCurrent(maximum, current);
     }
 
 
-    private int validateCurrent(int maximum, int current){
-        if(current > maximum){
+    private int validateCurrent(int maximum, int current) {
+        if (current > maximum) {
             throw new IllegalStateException("Current is greater than maximum");
         }
         return current;
@@ -31,5 +31,9 @@ public class Health {
 
     public Health setCurrent(int current) {
         return new Health(maximum, current);
+    }
+
+    public Health recieveDamage(int damage) {
+        return setCurrent(current - Validators.isPositive(damage, "Damage is negative or 0"));
     }
 }
