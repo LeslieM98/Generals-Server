@@ -15,4 +15,15 @@ public class Troop {
     MovementSpeed movementSpeed;
     CombatRange combatRange;
     ViewDistance viewDistance;
+
+    public Troop recieveDamage(int damage) {
+        return new Troop(
+                id,
+                new Health(health.getMaximum(), health.getCurrent() - damage),
+                position,
+                movementSpeed,
+                combatRange,
+                viewDistance
+        );
+    }
 }
