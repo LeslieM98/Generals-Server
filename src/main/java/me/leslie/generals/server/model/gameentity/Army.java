@@ -1,4 +1,4 @@
-package me.leslie.generals.server.model;
+package me.leslie.generals.server.model.gameentity;
 
 import lombok.Value;
 import me.leslie.generals.server.valueobject.TroopID;

@@ -1,6 +1,6 @@
 package me.leslie.generals.server.valueobject;
 
-import me.leslie.generals.server.model.Troop;
+import me.leslie.generals.server.model.gameentity.Troop;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

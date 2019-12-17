@@ -1,7 +1,7 @@
 package me.leslie.generals.server.rest;
 
 import com.google.gson.Gson;
-import me.leslie.generals.server.model.Troop;
+import me.leslie.generals.server.model.gameentity.Troop;
 import me.leslie.generals.server.repository.TroopRepository;
 import me.leslie.generals.server.valueobject.event.domain.Attack;
 import me.leslie.generals.server.valueobject.event.domain.Movement;
