@@ -3,6 +3,7 @@ package me.leslie.generals.server.valueobject.event.domain;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
+import me.leslie.generals.server.model.event.domain.DomainEvent;
 import me.leslie.generals.server.util.Validators;
 import me.leslie.generals.server.valueobject.TroopID;
 

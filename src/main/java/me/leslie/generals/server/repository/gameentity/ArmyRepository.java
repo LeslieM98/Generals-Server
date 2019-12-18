@@ -1,4 +1,4 @@
-package me.leslie.generals.server.repository;
+package me.leslie.generals.server.repository.gameentity;
 
 import me.leslie.generals.server.model.gameentity.Army;
 import me.leslie.generals.server.valueobject.TroopID;
