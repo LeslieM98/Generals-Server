@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public interface DomainEventRepository extends CrudRepository<AdressableDomainEvent, Integer> {
+public interface DomainEventStore extends CrudRepository<AdressableDomainEvent, Integer> {
     default Integer findNextID() {
         List<AdressableDomainEvent> events = new ArrayList<>();
         findAll().forEach(events::add);
