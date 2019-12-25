@@ -1,6 +1,7 @@
 package me.leslie.generals.server.rest;
 
 import com.google.gson.Gson;
+import me.leslie.generals.server.model.event.domain.AdressableDomainEvent;
 import me.leslie.generals.server.model.gameentity.Troop;
 import me.leslie.generals.server.repository.event.domain.DomainEventRepository;
 import me.leslie.generals.server.repository.gameentity.TroopRepository;
@@ -52,6 +53,7 @@ public class DomainEventController {
 
         Troop targetValue = target.get();
         troopRepository.save(targetValue.recieveDamage(attack.getDamage()));
+        domainEventRepository.save(new AdressableDomainEvent(domainEventRepository.findNextID(), attack));
         logger.info("Attack request successful for: {}", attack);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -69,6 +71,7 @@ public class DomainEventController {
 
         Troop troopValue = troop.get();
         troopRepository.save(troopValue.move(movement.getNewPosition()));
+        domainEventRepository.save(new AdressableDomainEvent(domainEventRepository.findNextID(), movement));
 
         logger.info("Movement request successful for: {}", movement);
         return new ResponseEntity<>(HttpStatus.OK);
