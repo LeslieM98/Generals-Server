@@ -2,6 +2,7 @@ package me.leslie.generals.server.rest;
 
 import com.google.gson.Gson;
 import me.leslie.generals.server.model.gameentity.Troop;
+import me.leslie.generals.server.repository.event.domain.DomainEventRepository;
 import me.leslie.generals.server.repository.gameentity.TroopRepository;
 import me.leslie.generals.server.valueobject.event.domain.Attack;
 import me.leslie.generals.server.valueobject.event.domain.Movement;
@@ -23,10 +24,12 @@ public class DomainEventController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private TroopRepository troopRepository;
+    private DomainEventRepository domainEventRepository;
 
     @Autowired
-    public DomainEventController(TroopRepository troopRepository) {
+    public DomainEventController(TroopRepository troopRepository, DomainEventRepository domainEventRepository) {
         this.troopRepository = troopRepository;
+        this.domainEventRepository = domainEventRepository;
     }
 
     @GetMapping(value = "attack")
@@ -66,6 +69,7 @@ public class DomainEventController {
 
         Troop troopValue = troop.get();
         troopRepository.save(troopValue.move(movement.getNewPosition()));
+
         logger.info("Movement request successful for: {}", movement);
         return new ResponseEntity<>(HttpStatus.OK);
     }
