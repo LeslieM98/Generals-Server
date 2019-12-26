@@ -1,7 +1,7 @@
 package me.leslie.generals.server.model.event.domain;
 
 import lombok.*;
-import me.leslie.generals.server.valueobject.event.domain.DomainEvent;
+import me.leslie.generals.server.valueobject.event.domain.IDomainEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,14 +19,14 @@ public class AdressableDomainEvent implements Comparable<AdressableDomainEvent> 
     @Id
     private int id;
     private Date creationDate;
-    private DomainEvent event;
+    private IDomainEvent event;
 
 
-    public AdressableDomainEvent(int id, @NotNull DomainEvent event) {
+    public AdressableDomainEvent(int id, @NotNull IDomainEvent event) {
         this(id, new Date(), event);
     }
 
-    public AdressableDomainEvent(int id, @NotNull Date creationDate, @NotNull DomainEvent event) {
+    public AdressableDomainEvent(int id, @NotNull Date creationDate, @NotNull IDomainEvent event) {
         this.id = id;
         this.creationDate = creationDate;
         this.event = event;

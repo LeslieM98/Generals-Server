@@ -3,8 +3,8 @@ package me.leslie.generals.server.rest;
 import com.google.gson.Gson;
 import me.leslie.generals.server.model.gameentity.Army;
 import me.leslie.generals.server.model.gameentity.Troop;
-import me.leslie.generals.server.repository.gameentity.ArmyRepository;
-import me.leslie.generals.server.repository.gameentity.TroopRepository;
+import me.leslie.generals.server.repository.gameentity.IArmyRepository;
+import me.leslie.generals.server.repository.gameentity.ITroopRepository;
 import me.leslie.generals.server.valueobject.TroopID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,17 +22,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/army/*")
 public class ArmyController {
 
-    private final ArmyRepository armyRepository;
-    private final TroopRepository troopRepository;
+    private final IArmyRepository armyRepository;
+    private final ITroopRepository troopRepository;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public ArmyController(ArmyRepository armyRepository, TroopRepository troopRepository) {
+    public ArmyController(IArmyRepository armyRepository, ITroopRepository troopRepository) {
         this.armyRepository = armyRepository;
         this.troopRepository = troopRepository;
     }
 
-    private List<TroopID> findNonMatching(Army army, TroopRepository troopRepository) {
+    private List<TroopID> findNonMatching(Army army, ITroopRepository troopRepository) {
         List<Troop> fetchedTrooops = new ArrayList<>();
         troopRepository.findAllById(army.getTroopIDS()).forEach(fetchedTrooops::add);
         return fetchedTrooops

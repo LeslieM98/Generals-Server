@@ -3,8 +3,8 @@ package me.leslie.generals.server.rest;
 import com.google.gson.Gson;
 import me.leslie.generals.server.model.event.domain.AdressableDomainEvent;
 import me.leslie.generals.server.model.gameentity.Troop;
-import me.leslie.generals.server.repository.event.domain.DomainEventStore;
-import me.leslie.generals.server.repository.gameentity.TroopRepository;
+import me.leslie.generals.server.repository.event.domain.IDomainEventStore;
+import me.leslie.generals.server.repository.gameentity.ITroopRepository;
 import me.leslie.generals.server.valueobject.event.domain.Attack;
 import me.leslie.generals.server.valueobject.event.domain.Movement;
 import org.slf4j.Logger;
@@ -24,11 +24,11 @@ import java.util.Optional;
 public class DomainEventController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private TroopRepository troopRepository;
-    private DomainEventStore domainEventRepository;
+    private ITroopRepository troopRepository;
+    private IDomainEventStore domainEventRepository;
 
     @Autowired
-    public DomainEventController(TroopRepository troopRepository, DomainEventStore domainEventRepository) {
+    public DomainEventController(ITroopRepository troopRepository, IDomainEventStore domainEventRepository) {
         this.troopRepository = troopRepository;
         this.domainEventRepository = domainEventRepository;
     }

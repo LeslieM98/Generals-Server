@@ -3,8 +3,8 @@ package me.leslie.generals.server.rest;
 import com.google.gson.Gson;
 import me.leslie.generals.server.model.gameentity.Army;
 import me.leslie.generals.server.model.gameentity.Troop;
-import me.leslie.generals.server.repository.gameentity.ArmyRepository;
-import me.leslie.generals.server.repository.gameentity.TroopRepository;
+import me.leslie.generals.server.repository.gameentity.IArmyRepository;
+import me.leslie.generals.server.repository.gameentity.ITroopRepository;
 import me.leslie.generals.server.valueobject.TroopID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,17 @@ import java.util.*;
 @RestController
 @RequestMapping("/troop/*")
 public class TroopController {
-    private final TroopRepository troopRepository;
-    private final ArmyRepository armyRepository;
+    private final ITroopRepository troopRepository;
+    private final IArmyRepository armyRepository;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    public TroopController(TroopRepository troopRepository, ArmyRepository armyRepository) {
+    public TroopController(ITroopRepository troopRepository, IArmyRepository armyRepository) {
         this.troopRepository = troopRepository;
         this.armyRepository = armyRepository;
     }
 
-    private void deleteTroopFromArmy(TroopID troopID, ArmyRepository armyRepository) {
+    private void deleteTroopFromArmy(TroopID troopID, IArmyRepository armyRepository) {
         List<Army> armies = new ArrayList<>();
         armyRepository.findAll().forEach(armies::add);
 

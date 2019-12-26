@@ -6,7 +6,7 @@ import me.leslie.generals.server.util.Validators;
 import me.leslie.generals.server.valueobject.TroopID;
 
 @Value
-public class Attack implements DomainEvent {
+public class Attack implements IDomainEvent {
     @NonNull
     TroopID source;
     @NonNull
