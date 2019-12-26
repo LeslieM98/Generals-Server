@@ -2,9 +2,9 @@ package me.leslie.generals.server.rest;
 
 import com.google.gson.Gson;
 import me.leslie.generals.server.model.gameentity.Army;
-import me.leslie.generals.server.model.gameentity.Troop;
 import me.leslie.generals.server.repository.gameentity.IArmyRepository;
 import me.leslie.generals.server.repository.gameentity.ITroopRepository;
+import me.leslie.generals.server.repository.gameentity.ValidatingArmyRepository;
 import me.leslie.generals.server.valueobject.TroopID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/army/*")
@@ -28,30 +25,17 @@ public class ArmyController {
 
     @Autowired
     public ArmyController(IArmyRepository armyRepository, ITroopRepository troopRepository) {
-        this.armyRepository = armyRepository;
         this.troopRepository = troopRepository;
+        this.armyRepository = new ValidatingArmyRepository(armyRepository, this.troopRepository);
     }
 
-    private List<TroopID> findNonMatching(Army army, ITroopRepository troopRepository) {
-        List<Troop> fetchedTrooops = new ArrayList<>();
-        troopRepository.findAllById(army.getTroopIDS()).forEach(fetchedTrooops::add);
-        return fetchedTrooops
-                .stream()
-                .map(Troop::getId)
-                .filter(army.getTroopIDS()::contains)
-                .collect(Collectors.toList());
-    }
 
     @PutMapping(value = "save")
-    public ResponseEntity<List<TroopID>> save(String json) {
+    public ResponseEntity<String> save(String json) {
         Army army = new Gson().fromJson(json, Army.class);
-        List<TroopID> nonExistingTroops = findNonMatching(army, troopRepository);
-        if (nonExistingTroops.isEmpty()) {
-            logger.info("Save request successful for: {}", army);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        logger.info("Save request not successful for: {}", army);
-        return new ResponseEntity<>(nonExistingTroops, HttpStatus.INTERNAL_SERVER_ERROR);
+        logger.info("Save request for: {}", army);
+        armyRepository.save(army);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(value = "delete")
