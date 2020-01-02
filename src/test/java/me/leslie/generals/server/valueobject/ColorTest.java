@@ -1,5 +1,4 @@
 package me.leslie.generals.server.valueobject;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
