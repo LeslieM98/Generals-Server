@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/troop/*")
@@ -80,5 +81,12 @@ public class TroopController {
         }
         logger.info("Get request successful for: {}", troopID);
         return new ResponseEntity<>(troop.get(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "getallids")
+    public ResponseEntity<Iterable<Integer>> get() {
+        ResponseEntity<Iterable<Integer>> response = new ResponseEntity<>(troopRepository.findAllTroopIDs().stream().map(TroopID::getValue).collect(Collectors.toList()), HttpStatus.OK);
+        logger.info("GetAllIDs request successful");
+        return response;
     }
 }
