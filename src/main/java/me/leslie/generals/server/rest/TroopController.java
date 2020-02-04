@@ -72,8 +72,8 @@ public class TroopController {
     }
 
     @GetMapping(value = "get")
-    public ResponseEntity<Troop> get(@RequestBody String json) {
-        TroopID troopID = new Gson().fromJson(json, TroopID.class);
+    public ResponseEntity<Troop> get(@RequestParam int id) {
+        TroopID troopID = new TroopID(id);
         Optional<Troop> troop = troopRepository.findById(troopID);
         if (troop.isEmpty()) {
             logger.info("Get request not successful for: {}", troopID);
