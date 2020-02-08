@@ -4,6 +4,7 @@ import lombok.Value;
 import me.leslie.generals.server.util.Validators;
 
 @Value
+// TODO: Rename to "MovementRange"
 public class MovementSpeed {
     double normal;
     double street;
