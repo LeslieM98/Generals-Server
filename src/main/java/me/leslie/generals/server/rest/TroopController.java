@@ -84,8 +84,8 @@ public class TroopController {
     }
 
     @GetMapping(value = "getallids")
-    public ResponseEntity<Iterable<Integer>> get() {
-        ResponseEntity<Iterable<Integer>> response = new ResponseEntity<>(troopRepository.findAllTroopIDs().stream().map(TroopID::getValue).collect(Collectors.toList()), HttpStatus.OK);
+    public ResponseEntity<List<Integer>> get() {
+        ResponseEntity<List<Integer>> response = new ResponseEntity<>(troopRepository.findAllTroopIDs().stream().map(TroopID::getValue).collect(Collectors.toList()), HttpStatus.OK);
         logger.info("GetAllIDs request successful");
         return response;
     }
