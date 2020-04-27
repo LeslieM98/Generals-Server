@@ -25,8 +25,8 @@ public class TroopController {
 
     @Autowired
     public TroopController(ITroopRepository troopRepository, IArmyRepository armyRepository) {
-        this.troopRepository = troopRepository;
-        this.armyRepository = armyRepository;
+        this.troopRepository = Objects.requireNonNull(troopRepository, "troopRepository is null");
+        this.armyRepository = Objects.requireNonNull(armyRepository, "armyRepository is null");
     }
 
     private void deleteTroopFromArmy(TroopID troopID, IArmyRepository armyRepository) {
