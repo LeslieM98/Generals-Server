@@ -158,6 +158,32 @@ public class TroopServiceTest {
         verify(armyRepository).save(updatedArmy);
     }
 
+    @Test
+    public void deleteTroopWithUnrelatedArmy() {
+        var toRemoveTroop = getTestTroops().get(0);
+        var army = new Army(new TroopID(1), Set.of(new TroopID(1), new TroopID(2)));
+
+        when(armyRepository.findAll()).thenReturn(List.of(army));
+        when(troopRepository.findById(toRemoveTroop.getId())).thenReturn(Optional.of(toRemoveTroop));
+        troopService.delete(toRemoveTroop.getId());
+
+        verify(troopRepository).deleteById(toRemoveTroop.getId());
+        verify(armyRepository, never()).save(army);
+    }
+
+    @Test
+    public void deleteHQOfArmy() {
+        var toRemoveTroop = getTestTroops().get(1);
+        var army = new Army(new TroopID(1), Set.of(new TroopID(1), new TroopID(2)));
+
+        when(armyRepository.findAll()).thenReturn(List.of(army));
+        when(troopRepository.findById(toRemoveTroop.getId())).thenReturn(Optional.of(toRemoveTroop));
+        troopService.delete(toRemoveTroop.getId());
+
+        verify(troopRepository).deleteById(toRemoveTroop.getId());
+        verify(armyRepository, never()).save(army);
+    }
+
     @Test(expected = NullPointerException.class)
     public void saveNull() {
         troopService.save(null);
@@ -172,9 +198,4 @@ public class TroopServiceTest {
     public void getNull() {
         troopService.get(null);
     }
-
-    // TODO: Delete Troop which is HQ of Army
-    // TODO: Delete Troop that is not in an Army but an Army exists on the side
-    // ! which stays untouched
-
 }
