@@ -104,7 +104,7 @@ public class ArmyServiceTest {
         verify(armyRepository).deleteById(toDelete.getHq());
     }
 
-    @Test
+    @Test(expected = MissingResourceException.class)
     public void deleteNonExisting() {
         var toDelete = getTestArmies().get(0);
         when(armyRepository.findById(toDelete.getHq())).thenReturn(Optional.empty());
