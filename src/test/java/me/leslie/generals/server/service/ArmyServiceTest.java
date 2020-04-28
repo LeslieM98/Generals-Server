@@ -88,11 +88,11 @@ public class ArmyServiceTest {
         assertEquals(received, armyService.get(received.getHq()));
     }
 
-    @Test(expected = MissingResourceException.class)
+    @Test
     public void getNonExisting() {
         when(armyRepository.findById(new TroopID(0))).thenReturn(Optional.empty());
 
-        armyService.get(new TroopID(0));
+        assertThrows(MissingResourceException.class, () -> armyService.get(new TroopID(0)));
     }
 
     @Test
@@ -104,11 +104,11 @@ public class ArmyServiceTest {
         verify(armyRepository).deleteById(toDelete.getHq());
     }
 
-    @Test(expected = MissingResourceException.class)
+    @Test
     public void deleteNonExisting() {
         var toDelete = getTestArmies().get(0);
         when(armyRepository.findById(toDelete.getHq())).thenReturn(Optional.empty());
 
-        armyService.delete(toDelete.getHq());
+        assertThrows(MissingResourceException.class, () -> armyService.delete(toDelete.getHq()));
     }
 }

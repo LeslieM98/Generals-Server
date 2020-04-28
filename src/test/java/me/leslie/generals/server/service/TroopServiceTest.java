@@ -64,13 +64,12 @@ public class TroopServiceTest {
         assertDoesNotThrow(() -> new TroopService(troopRepository, armyRepository));
     }
 
-    @Test(expected = MissingResourceException.class)
+    @Test
     public void deleteNonExistingTroop() {
         var searchedID = new TroopID(1);
         when(troopRepository.findById(searchedID)).thenReturn(Optional.empty());
 
-        troopService.delete(searchedID);
-        fail("Did not throw exception");
+        assertThrows(MissingResourceException.class, () -> troopService.delete(searchedID));
     }
 
     @Test
@@ -109,13 +108,12 @@ public class TroopServiceTest {
         assertEquals(getTestTroops().get(1), result);
     }
 
-    @Test(expected = MissingResourceException.class)
+    @Test
     public void getNonExisting() {
         var expectedID = new TroopID(1);
         when(troopRepository.findById(expectedID)).thenReturn(Optional.empty());
 
-        troopService.get(expectedID);
-        fail("Did not throw exception");
+        assertThrows(MissingResourceException.class, () -> troopService.get(expectedID));
     }
 
     @Test
@@ -184,18 +182,18 @@ public class TroopServiceTest {
         verify(armyRepository, never()).save(army);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void saveNull() {
-        troopService.save(null);
+        assertThrows(NullPointerException.class, () -> troopService.save(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void deleteNull() {
-        troopService.delete(null);
+        assertThrows(NullPointerException.class, () -> troopService.delete(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void getNull() {
-        troopService.get(null);
+        assertThrows(NullPointerException.class, () -> troopService.get(null));
     }
 }
