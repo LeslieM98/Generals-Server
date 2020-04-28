@@ -2,7 +2,6 @@ package me.leslie.generals.server.service;
 
 import java.util.List;
 
-import com.google.gson.Gson;
 import me.leslie.generals.server.model.gameentity.Army;
 import me.leslie.generals.server.repository.gameentity.IArmyRepository;
 import me.leslie.generals.server.repository.gameentity.ITroopRepository;
@@ -11,9 +10,6 @@ import me.leslie.generals.server.valueobject.TroopID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import lombok.NonNull;
 
