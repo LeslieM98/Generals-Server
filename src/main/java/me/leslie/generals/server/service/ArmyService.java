@@ -28,7 +28,7 @@ public class ArmyService {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public Army delete(Army army) {
+    public Army delete(TroopID hq) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
