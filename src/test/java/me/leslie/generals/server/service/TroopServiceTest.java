@@ -158,4 +158,19 @@ public class TroopServiceTest {
         verify(armyRepository).save(updatedArmy);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void saveNull() {
+        troopService.save(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void deleteNull() {
+        troopService.delete(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getNull() {
+        troopService.get(null);
+    }
+
 }

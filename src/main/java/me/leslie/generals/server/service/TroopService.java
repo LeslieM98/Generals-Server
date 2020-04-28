@@ -30,11 +30,11 @@ public class TroopService {
         this.troopRepository = troopRepository;
     }
 
-    public void save(Troop troop) {
+    public void save(@NonNull Troop troop) {
         troopRepository.save(troop);
     }
 
-    public Troop delete(TroopID troopID) {
+    public Troop delete(@NonNull TroopID troopID) {
         Optional<Troop> troop = troopRepository.findById(troopID);
         if (troop.isEmpty()) {
             throw new MissingResourceException("Cannot find troop", troopID.getClass().getName(), troopID.toString());
@@ -48,7 +48,7 @@ public class TroopService {
         return StreamSupport.stream(troopRepository.findAll().spliterator(), false).collect(Collectors.toList());
     }
 
-    public Troop get(TroopID troopID) {
+    public Troop get(@NonNull TroopID troopID) {
         Optional<Troop> troop = troopRepository.findById(troopID);
         if (troop.isEmpty()) {
             throw new MissingResourceException("Cannot find troop", troopID.getClass().getName(), troopID.toString());
