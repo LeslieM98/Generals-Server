@@ -173,4 +173,8 @@ public class TroopServiceTest {
         troopService.get(null);
     }
 
+    // TODO: Delete Troop which is HQ of Army
+    // TODO: Delete Troop that is not in an Army but an Army exists on the side
+    // ! which stays untouched
+
 }
